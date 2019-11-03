@@ -1,7 +1,7 @@
 ---
 title: "Data science and analysis in Neuroscience"
 author: "Kevin Allen"
-date: "September 26, 2019"
+date: "November 7, 2019"
 output:
   ioslides_presentation: default
   slidy_presentation: default
@@ -204,10 +204,10 @@ df[1,]
 df[c(1,2),]
 ```
 
-## Exercise 1.1
+## Exercise 1.1 Data frames
 
 1. Download the results from our Previous experience survey. 
-  + Use `function` and save the results as a variable using `<-`.
+  + Load it into R with the function `FCT` and save the results as a variable using `<-`.
 
 2. Use built-in functions to.
   + Count how many students have experience with R.
