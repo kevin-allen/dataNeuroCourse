@@ -10,6 +10,9 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
 ```
 ## Course objectives
 
@@ -35,20 +38,20 @@ knitr::include_graphics("images/rds_cover.png")
 knitr::include_graphics("images/isl_cover.jpeg")
 ```
 
-Both books are available online for free.
+Both books are available online.
 
 ## Conventions in the slides
 
 Text appears as this line. 
 
-Computer code appears as the next 3 line
+Code appears as the next 3 line.
 ```{r ex, echo=TRUE,eval=FALSE}
 x=10
 y=5
 x+y
 ```
 
-Comments start with `#`, output starts with `##`
+Comments start with `#`, output starts with `##`.
 ```{r ex1}
 # This is a comment, for humans only
 x=10
@@ -88,8 +91,30 @@ Online form (Monday)
 
 
 ## Data science landscape
+### Matlab
 
-Create a summary table of what is available (Tuesday)
+Stable environment, singal processing, matrix operations
+
+Weakness: Proprietary programming language -> Implications in science
+
+### Python
+Open source language, general purpose, popularity rising, tensorflow for machine learning
+
+### R
+Open source language, statistical analysis, visualisation, R packages, RStudio
+
+
+## Data science landscape
+
+Recommendation: Invest your time in open source languages (`R` and `python`).
+
+Both `R` and `python` are great for data analysis.
+
+The most important point is to get the job done, ideally rapidely.
+
+For the course, we will use mainly `R`. 
+
+We will use `python` for our `deeplabcut` project.
 
 ## Introduction to R 
 
@@ -113,10 +138,16 @@ print(x)
 For a list of function that are part of the core of R see the cheatsheat.
 ```{r example3}
 sin(x)
-abs(-100)
 seq(1,10)
-c(1,2,3,6,7,8)
+x<-c(1,2,3,6,7,8)
+sum(x)
 ```
+
+## Get help
+
+1. A google search: what you want to do + `R` 
+2. ?function()
+
 
 ## Object types
 
@@ -130,28 +161,24 @@ class(y)
 
 TRICK: You can use tab to complete the name of a fonction in RStudio.
 
-
 ## Data frames
 
 We will be working with data frames.
 
 ```{r dataFrame1}
 # create a data frame
-data.frame(firstName=c("Sonia","Bruno","Paul"),
+df<-data.frame(firstName=c("Sonia","Bruno","Paul"),
            height=c(170,188,150),
            weight=c(72,90,50),
            married=c(TRUE,FALSE,FALSE))
+df
 ```
 
 ## Data frames
 
 ```{r dataFrame2,echo=FALSE}
-data.frame(firstName=c("Sonia","Bruno","Paul"),
-           height=c(170,188,150),
-           weight=c(72,90,50),
-           married=c(TRUE,FALSE,FALSE))
+df
 ```
-
 
 1. Data frames are like tables. 
 2. A `row` usually represents one observation (e.g., one subject). 
@@ -159,6 +186,33 @@ data.frame(firstName=c("Sonia","Bruno","Paul"),
 4. A `cell` containS a single value.
 
 TRICK: Organize your data frame with one entry per row whenever possible. 
+
+## Subsetting data frames
+
+```{r dataFrame3}
+# one variable
+df$height
+# or
+df[,"height"]
+```
+
+## Subsetting data frames
+```{r dataFrame4}
+# one row
+df[1,]
+# two rows
+df[c(1,2),]
+```
+
+## Exercise 1.1
+
+1. Download the results from our Previous experience survey. 
+  + Use `function` and save the results as a variable using `<-`.
+
+2. Use built-in functions to.
+  + Count how many students have experience with R.
+  + Calculate the mean experience of students in months with data science.
+  + Get the mean experience of the first 5 students in the data frame.
 
 
 ## tidyverse
