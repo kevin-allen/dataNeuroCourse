@@ -1,0 +1,112 @@
+---
+title: "Data science and analysis in Neuroscience, Lecture 1"
+author: "Kevin Allen"
+date: "September 26, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Course introduction
+
+This course is an introduction to data science and analysis in Neuroscience. 
+
+The objectives are as follows:
+1. 
+2. 
+3. 
+
+The theorical part of the course is largely based on [R for Data Science](https://r4ds.had.co.nz/) and on [An Introduction to Statistical Learning: With Applications in R](https://www.amazon.com/Introduction-Statistical-Learning-Applications-Statistics/dp/1461471370). The first book is freely available on the web or as a pdf. The second is not free.
+
+To become better at data analysis, you need to practice. Therefore, a significant portion of the course will be spent coding, either in the classroom or at home. For most of these exercises, we will use neuroscience data sets. After you have a go at an exercise, we will quickly review it and try to answer any questions you might have.
+
+At the end of each class, there will be some exercises and/or readings to complete before the next class.
+
+There are many great languages and programing environments available today, but we can't cover them all in one short course. Therefore, we will focus mainly on R and RStudio. We will only briefly use python to try out a pose estimator program called [deeplabcut](https://github.com/AlexEMG/DeepLabCut).
+
+Ready?
+
+## Introduction to R 
+
+In RStudio, you can perform simple calculation as you would expect.
+```{r example1,eval=FALSE}
+4+9
+(360+50)/2
+```
+
+You can create an object to store a value using <-. You can display the value stored in an object by simply writing its name, or using print().
+```{r example2,eval=T}
+x<-10+50
+x
+print(x)
+```
+
+You can use several built in functions that are part of R. For a list of function that are part of the core of R, see the cheatsheat.
+```{r example3}
+sin(x)
+abs(-100)
+seq(1,10)
+c(1,2,3,6,7,8)
+```
+
+There are different types of objects in R. The most commons are numerics, characters, factors, logicals, lists, data.frames. You can know the type of an object with class(objectName).
+```{r example4}
+class(x)
+y<-"neuroscience"
+class(y)
+```
+
+TRICK: You can use tab to complete the name of a fonction in RStudio.
+
+## Data frames
+
+Most of the time, we will be working with data frames. Data frames are just like tables. They can have several columns and rows. A row usually represents one observation (e.g., the data from one trial or one subject). A column usually contains a variable (e.g., the height of your subjects). A cell contain a single value.
+
+```{r dataFrame1}
+# weight and height of 3 subjects
+data.frame(height=c(170,188,150),weight=c(72,90,50))
+```
+Whenever possible, organize your data frame with one entry per row and one variable per column. This will make your analysis much simpler. 
+
+## Tidyverse
+
+With programming, there are ususally several possible ways to perfrom one task. Feel free to explore as much ways as you can. In the course, I will encourage the use of a group of packages called tidyverse.
+
+Compared to core R functions, tidyverse makes it easier to understand what your code does. It makes your code easier to read. It is also easier to learn.
+
+tidyverse is not part of the core R, you need to load the packages whenever you want to use it. This is done with the library() function.
+
+Similarly, I will use the package ggplot2 to visualize data. This package is also part of tidyverse. 
+
+Large part of what we will cover is part of the book "R for Data Science" from Haddley Wickham and Garrett Grolemund
+
+```{r tidy1}
+library(tidyverse)
+```
+## A very short introduction to ggplot2
+
+
+
+## Data transformation with dplyr
+
+We will now learn how to play with your dataframe.
+
+
+
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
