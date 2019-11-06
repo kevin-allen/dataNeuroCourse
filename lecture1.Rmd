@@ -94,6 +94,8 @@ git pull
 4. Homeworks: readings or some exercise
 5. Review quizzes
 
+It is your course, interupt me as often as you like.
+
 
 ## Previous experience
 
@@ -368,8 +370,12 @@ Here I set an aesthetic manually, outside of the `mapping = aes()` block.
 
 ## Geometric objects
 
+Show different types of graphs
+
+## Count and distributions
 
 
+## Exercises 
 
 
 
