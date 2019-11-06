@@ -216,6 +216,7 @@ mySum()
 1. A google search: what you want to do + `R` 
 2. ?function()
 3. Ask someone
+4. Cheat sheets
 
 
 ## Object types
