@@ -12,8 +12,19 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(knitr)
-library(kableExtra)
 ```
+
+## What is data science?
+
+Turn raw data into understanding, insight and knowledge.
+
+
+
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/data-science.png")
+```
+
+
 ## Course objectives
 
 1. Identify the principal tools available in data science.
@@ -24,7 +35,7 @@ library(kableExtra)
 6. Apply a machine-learning algorithm to test a hypothesis in neuroscience.
 7. Harness the power of deep neural networks to quantify behavior with deeplabcut.
 
-## Supplementary materials
+## Supporting materials
 
 1. [R for Data Science](https://r4ds.had.co.nz/)
 
@@ -42,22 +53,21 @@ Both books are available online.
 
 ## Conventions in the slides
 
-Text appears as this line. 
-
 Code appears as the next 3 line.
 ```{r ex, echo=TRUE,eval=FALSE}
-x=10
-y=5
-x+y
+x <- 10
+y <- 5
+x + y
 ```
 
 Comments start with `#`, output starts with `##`.
 ```{r ex1}
 # This is a comment, for humans only
-x=10
-y=5
-x+y
+x <- 10
+y <- 5
+x + y
 ```
+
 
 ## Course online repository
 
@@ -65,7 +75,7 @@ The content of the course is in a github repository.
 
 https://github.com/kevin-allen/dataNeuroCourse
 
-We will cover [git](https://git-scm.com/) and online repository later on.
+We will cover [git](https://git-scm.com/) and online repositories later on.
 
 To copy the repository to your computer:
 ```{bash clone,  eval=FALSE}
@@ -87,7 +97,9 @@ git pull
 
 ## Previous experience
 
-Online form (Monday)
+Short survey of the classroom.
+
+https://tinyurl.com/y2rtpf2h
 
 
 ## Data science landscape
@@ -106,47 +118,104 @@ Open source language, statistical analysis, visualisation, R packages, RStudio
 
 ## Data science landscape
 
-Recommendation: Invest your time in open source languages (`R` and `python`).
+Recommendation: Use open source languages (`R` and `python`).
 
-Both `R` and `python` are great for data analysis.
+Both `R` and `python` are great tools for data analysis.
 
-The most important point is to get the job done, ideally rapidely.
+In the end, the most important point is to get the job done.
 
-For the course, we will use mainly `R`. 
+We will use mainly `R`. 
 
 We will use `python` for our `deeplabcut` project.
+
+## Rstudio
+```{r, echo=FALSE,out.width = "650px"}
+knitr::include_graphics("images/rstudio-console.png")
+```
+
 
 ## Introduction to R 
 
 Perform simple calculation as you would expect.
 ```{r example1,eval=FALSE}
-4+9
-(360+50)/2
+4 + 9
+(360 + 50) / 2
 ```
 
 ## Variables 
-Create an object to store a value using `<-`. You can display the value stored in an object by simply writing its name, or using `print()`.
+Create an object to store a value using `<-`. You can display the value stored in an object by simply writing its name.
+
+Variable names must to start with a letter and can also contain numbers and _.
 ```{r example2,eval=T}
-x<-10+50
+x <- 10 + 50
 x
 print(x)
 ```
+Trick: `<-` shortcut is Alt-- (Alt and minus sign)
 
+## Variables
+
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/variable_names.png")
+```
 
 ## Built-in functions
 
-For a list of function that are part of the core of R see the cheatsheat.
+```{r example3.1,echo=TRUE,eval=FALSE}
+function_name(arg1 = val1, arg2 = val2, ...)
+```
+
 ```{r example3}
+x <- c(1, 2, 3, 6)
 sin(x)
-seq(1,10)
-x<-c(1,2,3,6,7,8)
+seq(1, 10)
 sum(x)
 ```
+
+## Your own functions
+
+Define a function instead of copying and pasting blocks of code.
+
+```{r myFct}
+# define a function called addTwo
+addTwo <- function(x) {
+  return(x + 2)
+}
+# use the function
+addTwo(2)
+```
+
+Trick: use tab to complete names
+
+## Your own functions
+```{r myFct2}
+# definition of a more useful function
+fahrenheit_to_celsius <- function(temp_F) {
+  temp_C <- (temp_F - 32) * 5 / 9
+  return(temp_C)
+}
+# use it, the name explains what the function does
+fahrenheit_to_celsius(32)
+```
+
+## Your own functions
+
+```{r myFct3}
+# set default values of function parameters
+mySum <- function(iOne=1, iTwo = 3){
+  return(iOne + iTwo)
+}
+
+# use the default parameters
+mySum()
+```
+
 
 ## Get help
 
 1. A google search: what you want to do + `R` 
 2. ?function()
+3. Ask someone
 
 
 ## Object types
@@ -154,16 +223,17 @@ sum(x)
 There are different types of objects (variables): numerics, characters, factors, logicals, lists, data.frames. 
 Inspect with `class()`.
 ```{r example4}
+x
 class(x)
-y<-"neuroscience"
+y <- "neuroscience"
 class(y)
 ```
 
-TRICK: You can use tab to complete the name of a fonction in RStudio.
+TRICK: Use tab to complete the name of a fonction in RStudio.
 
 ## Data frames
 
-We will be working with data frames.
+Data are often organized as data frames.
 
 ```{r dataFrame1}
 # create a data frame
@@ -173,6 +243,8 @@ df<-data.frame(firstName=c("Sonia","Bruno","Paul"),
            married=c(TRUE,FALSE,FALSE))
 df
 ```
+
+Trick: Use `view(df)` to get a more excel-like look.
 
 ## Data frames
 
@@ -204,15 +276,100 @@ df[1,]
 df[c(1,2),]
 ```
 
-## Exercise 1.1 Data frames
+## R packages
 
-1. Download the results from our Previous experience survey. 
-  + Load it into R with the function `FCT` and save the results as a variable using `<-`.
+Many useful functions are found in R packages. These are free libraries of functions.
 
-2. Use built-in functions to.
-  + Count how many students have experience with R.
-  + Calculate the mean experience of students in months with data science.
-  + Get the mean experience of the first 5 students in the data frame.
+To download and install a package from CRAN (Comprehensive R Archive Network).
+```{r install, eval = FALSE}
+install.packages("package_name")
+```
+
+To load the package in your R session
+```{r install1, eval = FALSE}
+library("package_name")
+```
+
+## Exercise
+
+We will use the mpg data set that comes with tidyverse, so load tidyverse.
+You can get information with `?mpg`.
+
+1. What is the mean city miles per gallon of all cars?
+2. What is the maximum number of cylinders in the data set?
+3. What is the range of the highway miles per gallon in the data? 
+4. What is the mean city miles per gallon for the first 20 cars?
+
+## Solutions
+```{r solution}
+mean(mpg$cty)
+max(mpg$cyl)
+range(mpg$hwy)
+mean(mpg$cty[1:10])
+```
+
+## An introduction to ggplot2
+
+1. `ggplot2` is an R package included in `tidyverse`.
+2. It is relatively easy to learn.
+3. You get nice looking graphs relatively quickly.
+4. Works well with data frames.
+5. R also has base graphics, `plot()`
+
+## Create a plot
+
+```{r plot}
+ggplot(data=mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+## Template
+
+```{r plot1, eval=FALSE}
+ggplot(data=<DATA>) +
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
+```
+
+1. `ggplot` creates an empty graph and coordinate system for the data
+2. `geom` functions add layers to the plot
+3. `geom` functions need a mapping argument paired with `aes()`
+
+## Aesthetic Mapping
+
+Aesthetics include the x-axis and y-axis, together with size, shape, color of the points
+
+```{r plot2,out.width=500}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+Shape and color work better with categorical variables.
+
+## Exercise with ggplot2
+
+1. What plot could you produce to investigate whether cars are more efficient on the highway or in a city?
+2. How could you add information about the displacement of the motor in your graph? 
+
+## Solution
+
+```{r plot3,out.width=500}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = hwy, y = cty, size=displ),
+             color = "blue")+
+  xlim(5,40) +
+  ylim(5,40)
+```
+
+Here I set an aesthetic manually, outside of the `mapping = aes()` block.
+
+## Facets
+
+
+## Geometric objects
+
+
+
+
 
 
 ## tidyverse
@@ -223,25 +380,18 @@ Advantages of tidyverse over built-in core R functions
 
 1. Code is easier to understand 
 2. Code is easier to read 
-3. Easier to learn.
+3. Easier to learn
 
 Disadvantage
 
 1. You need to load it before starting coding
+2. You need tidy data frames
 
 ## tidyverse
 
 ```{r tidy1, results = 'hide'}
 library(tidyverse)
 ```
-
-## A very short introduction to ggplot2
-
-Tuesday
-
-## Exercise with ggplot2
-
-Tuesday
 
 ## Data transformation with dplyr
 
@@ -250,3 +400,18 @@ We will now learn how to play with your dataframe.
 ## Exercise with dplyr
 
 Wednesday
+
+## Next week
+
+I am in Magdeburg for a collaborative grant application.
+
+Possible workarounds
+
+1. We have slightly longer sessions on the 21st and 28th of November.
+2. We find an extra date to replace the 7th of Noverber.
+
+## For the next lecture
+
+1. Install [git](https://git-scm.com/) on your computer.
+2. Reading: R for Data Science Chapters 1 and 2.
+
