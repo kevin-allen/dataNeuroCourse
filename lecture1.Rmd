@@ -14,10 +14,17 @@ library(tidyverse)
 library(knitr)
 ```
 
+## Today's plan
+1. Overview of the course
+2. Assessment of previous experience
+3. Data science landscape and RStudio
+4. Introduction to R
+5. Introduction to ggplot2
+
+
 ## What is data science?
 
 Turn raw data into understanding, insight and knowledge.
-
 
 
 ```{r, echo=FALSE,out.width = "800px"}
@@ -130,7 +137,7 @@ We will use mainly `R`.
 
 We will use `python` for our `deeplabcut` project.
 
-## Rstudio
+## RStudio
 ```{r, echo=FALSE,out.width = "650px"}
 knitr::include_graphics("images/rstudio-console.png")
 ```
@@ -160,6 +167,43 @@ Trick: `<-` shortcut is Alt-- (Alt and minus sign)
 ```{r, echo=FALSE,out.width = "800px"}
 knitr::include_graphics("images/variable_names.png")
 ```
+
+## Arithmetic operators
+```{r arithmetic,echo=FALSE,eval=TRUE}
+kable(data.frame(Operator=c("+", "-", "*", "/", "^", "%%", "%/%"),
+                 Description=c("Addition","Subtraction","Multiplication","Division",
+                               "Exponent","Modulus (Remainder)","Integer division"),
+                 Example=c("1+1","5-1","2*5","10/5",
+                           "2^3","5%%2","5%/%2"),
+                 Results=c(1+1,5-1,2*5,10/5,
+                           2^3,5%%2,5%/%2)))
+```
+
+## Relational operators
+
+```{r relational,echo=FALSE,eval=TRUE}
+kable(data.frame(Operator=c("<", ">", "<=", ">=", "==", "!="),
+                 Description=c("Less than","Greater than","Less than or equal","Greater than or equal",
+                               "Equal to","Not equal to"),
+                 Example=c("1<2","5>4","5<=5","3>=1",
+                           "2==2","2!=2"),
+                 Results=c(1<2,5>4,5<=5,3>=1,
+                           2==2,2!=2)))
+```
+
+## Operators and vectors
+
+```{r operatorVector}
+x <- 1:5
+y <- c(2,2,2,2,2)
+x + y
+x == y
+which(x == y)
+```
+
+## Quizz
+
+1. What is the difference between `=` and `==`?
 
 ## Built-in functions
 
@@ -212,13 +256,6 @@ mySum <- function(iOne=1, iTwo = 3){
 mySum()
 ```
 
-
-## Get help
-
-1. A google search: what you want to do + `R` 
-2. ?function()
-3. Ask someone
-4. Cheat sheets
 
 
 ## Object types
@@ -279,6 +316,22 @@ df[1,]
 df[c(1,2),]
 ```
 
+## Subsetting data frames
+```{r dataFrame5}
+df[df$height>165,]
+df[df$weight<80,]
+```
+
+What does `df[df$married==TRUE]` do? Is it what you expected?
+
+## Get help
+
+1. A google search: what you want to do + `R` 
+2. ?function()
+3. Ask someone
+4. Cheat sheets
+
+
 ## R packages
 
 Many useful functions are found in R packages. These are free libraries of functions.
@@ -302,13 +355,15 @@ You can get information with `?mpg`.
 2. What is the maximum number of cylinders in the data set?
 3. What is the range of the highway miles per gallon in the data? 
 4. What is the mean city miles per gallon for the first 20 cars?
+5. What is the mean city miles per gallon for cars produced in 2008
 
 ## Solutions
-```{r solution}
+```{r solution,echo=T,eval=F}
 mean(mpg$cty)
 max(mpg$cyl)
 range(mpg$hwy)
 mean(mpg$cty[1:10])
+mean(mpg$cty[mpg$year==2008])
 ```
 
 ## An introduction to ggplot2
@@ -367,49 +422,78 @@ Here I set an aesthetic manually, outside of the `mapping = aes()` block.
 
 ## Facets
 
+Split your plot into facets
+
+```{r plot4, out.width=500}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_wrap(~class, nrow = 2)
+```
 
 ## Geometric objects
 
 Show different types of graphs
 
-## Count and distributions
+There are up to 30 types of geoms. 
 
+You can mix geoms.
 
-## Exercises 
+## Geometric objects
 
+geom_smooth
 
-
-## tidyverse
-
-`tidyverse` is a collection of R packages for data science.
-
-Advantages of tidyverse over built-in core R functions
-
-1. Code is easier to understand 
-2. Code is easier to read 
-3. Easier to learn
-
-Disadvantage
-
-1. You need to load it before starting coding
-2. You need tidy data frames
-
-## tidyverse
-
-```{r tidy1, results = 'hide'}
-library(tidyverse)
+```{r geom_smooth,out.width=500}
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
 ```
 
-## Data transformation with dplyr
+## Geometric objects
 
-We will now learn how to play with your dataframe.
+geom_smooth
 
-## Exercise with dplyr
+```{r geom_smooth0,out.width=500}
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+```
 
-Wednesday
+## Geometric object 
+
+Combining several geoms
+
+```{r geom_smooth1,out.width=400}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_smooth()
+```
+
+## Count and distributions
+
+Categorical variable
+```{r count,out.width=500}
+ggplot(data = mpg) +
+  geom_bar(mapping = aes(x=class))
+```
+
+## Count and distribution
+Continuous variable
+```{r count1,out.width=500}
+ggplot(data = mpg) +
+  geom_histogram(mapping = aes(x=displ))
+```
+
+## Exercise 
+
+1. Produce a boxplot showing the highway consumption for the different classes of car.
+
+## Solution
+
+```{r boxplot, out.width=500}
+ggplot(data = mpg) +
+  geom_boxplot(mapping = aes(x=class,y=hwy))
+```
+
 
 ## Next week
-
 I am in Magdeburg for a collaborative grant application.
 
 Possible workarounds
@@ -417,8 +501,16 @@ Possible workarounds
 1. We have slightly longer sessions on the 21st and 28th of November.
 2. We find an extra date to replace the 7th of Noverber.
 
-## For the next lecture
+## To do before the next lecture
 
 1. Install [git](https://git-scm.com/) on your computer.
 2. Reading: R for Data Science Chapters 1 and 2.
 
+
+## Next lecture
+
+1. Review exercises
+2. Saving you code as .R files.
+3. git repositories (create one!)
+3. dplyr
+4. Example: Analysis of behavioural data
