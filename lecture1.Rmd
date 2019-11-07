@@ -78,7 +78,7 @@ x + y
 
 ## Course online repository
 
-The content of the course is in a github repository.
+The content of the course is in a GitHub repository.
 
 https://github.com/kevin-allen/dataNeuroCourse
 
@@ -98,15 +98,15 @@ git pull
 1. Short introduction of topics
 2. Exercises in small groups
 3. Review of exercises
-4. Homeworks: readings or some exercise
+4. Homeworks: readings or some exercises
 5. Review quizzes
 
-It is your course, interupt me as often as you like.
+It is your course, interrupt me as often as you like.
 
 
 ## Previous experience
 
-Short survey of the classroom.
+A short survey of the classroom.
 
 https://tinyurl.com/y2rtpf2h
 
@@ -119,19 +119,19 @@ Stable environment, singal processing, matrix operations
 Weakness: Proprietary programming language -> Implications in science
 
 ### Python
-Open source language, general purpose, popularity rising, tensorflow for machine learning
+Open-source language, general-purpose, popularity rising, TensorFlow for machine learning
 
 ### R
-Open source language, statistical analysis, visualisation, R packages, RStudio
+Open-source language, statistical analysis, visualization, R packages, RStudio
 
 
 ## Data science landscape
 
-Recommendation: Use open source languages (`R` and `python`).
+Recommendation: Use open-source languages (`R` and `python`).
 
 Both `R` and `python` are great tools for data analysis.
 
-In the end, the most important point is to get the job done.
+In the end, the most crucial point is to get the job done.
 
 We will use mainly `R`. 
 
@@ -194,8 +194,8 @@ kable(data.frame(Operator=c("<", ">", "<=", ">=", "==", "!="),
 ## Operators and vectors
 
 ```{r operatorVector}
-x <- 1:5
-y <- c(2,2,2,2,2)
+x <- 1:5 # vector from 1 to 5
+y <- c(2,2,2,2,2) # c for concatenate
 x + y
 x == y
 which(x == y)
@@ -208,7 +208,7 @@ which(x == y)
 ## Built-in functions
 
 ```{r example3.1,echo=TRUE,eval=FALSE}
-function_name(arg1 = val1, arg2 = val2, ...)
+function_name(arg1 = val1, arg2 = val2)
 ```
 
 ```{r example3}
@@ -269,7 +269,7 @@ y <- "neuroscience"
 class(y)
 ```
 
-TRICK: Use tab to complete the name of a fonction in RStudio.
+TRICK: Use tab to complete the name of a function in RStudio.
 
 ## Data frames
 
@@ -294,8 +294,8 @@ df
 
 1. Data frames are like tables. 
 2. A `row` usually represents one observation (e.g., one subject). 
-3. A `column` usually contains a variable (e.g., height). 
-4. A `cell` containS a single value.
+3. A `column` often contains a variable (e.g., height). 
+4. A `cell` contains a single value.
 
 TRICK: Organize your data frame with one entry per row whenever possible. 
 
@@ -329,7 +329,7 @@ What does `df[df$married==TRUE]` do? Is it what you expected?
 1. A google search: what you want to do + `R` 
 2. ?function()
 3. Ask someone
-4. Cheat sheets
+4. [Cheat sheets](https://rstudio.com/resources/cheatsheets/)
 
 
 ## R packages
@@ -355,7 +355,7 @@ You can get information with `?mpg`.
 2. What is the maximum number of cylinders in the data set?
 3. What is the range of the highway miles per gallon in the data? 
 4. What is the mean city miles per gallon for the first 20 cars?
-5. What is the mean city miles per gallon for cars produced in 2008
+5. What is the mean city miles per gallon for vehicles produced in 2008
 
 ## Solutions
 ```{r solution,echo=T,eval=F}
@@ -368,10 +368,10 @@ mean(mpg$cty[mpg$year==2008])
 
 ## An introduction to ggplot2
 
-1. `ggplot2` is an R package included in `tidyverse`.
+1. `ggplot2` is an R package for visualization.
 2. It is relatively easy to learn.
 3. You get nice looking graphs relatively quickly.
-4. Works well with data frames.
+4. It works well with data frames.
 5. R also has base graphics, `plot()`
 
 ## Create a plot
@@ -394,7 +394,7 @@ ggplot(data=<DATA>) +
 
 ## Aesthetic Mapping
 
-Aesthetics include the x-axis and y-axis, together with size, shape, color of the points
+Aesthetics include the x-axis and y-axis, together with size, shape, color of the points.
 
 ```{r plot2,out.width=500}
 ggplot(data = mpg) +
@@ -483,7 +483,7 @@ ggplot(data = mpg) +
 
 ## Exercise 
 
-1. Produce a boxplot showing the highway consumption for the different classes of car.
+1. Produce a boxplot showing the highway consumption for the different classes of cars.
 
 ## Solution
 
@@ -492,19 +492,18 @@ ggplot(data = mpg) +
   geom_boxplot(mapping = aes(x=class,y=hwy))
 ```
 
-
 ## Next week
 I am in Magdeburg for a collaborative grant application.
 
 Possible workarounds
 
 1. We have slightly longer sessions on the 21st and 28th of November.
-2. We find an extra date to replace the 7th of Noverber.
+2. We find an new date to replace the 7th of November.
 
 ## To do before the next lecture
 
 1. Install [git](https://git-scm.com/) on your computer.
-2. Reading: R for Data Science Chapters 1 and 2.
+2. Reading: R for Data Science, Chapters 1 and 2.
 
 
 ## Next lecture
@@ -513,4 +512,4 @@ Possible workarounds
 2. Saving you code as .R files.
 3. git repositories (create one!)
 3. dplyr
-4. Example: Analysis of behavioural data
+4. Example: Analysis of behavioral data
