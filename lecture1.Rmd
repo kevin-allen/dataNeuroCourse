@@ -10,9 +10,8 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+# you might need to install these packages: install.packages()
 library(tidyverse)
-library(knitr)
-library(kableExtra)
 ```
 ## Course objectives
 
@@ -235,7 +234,7 @@ Disadvantage
 library(tidyverse)
 ```
 
-## A very short introduction to ggplot2
+## Introduction to ggplot2
 
 Tuesday
 
