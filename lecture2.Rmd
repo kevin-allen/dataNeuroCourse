@@ -4,8 +4,8 @@ author: "Kevin Allen"
 date: "November 21, 2019"
 output:
   ioslides_presentation: default
-  slidy_presentation: default
   beamer_presentation: default
+  slidy_presentation: default
 ---
 
 ```{r setup, include=FALSE}
@@ -469,14 +469,13 @@ df %>% group_by(mouse,block) %>%
 
 
 
-
 ## Next lecture
 
-1.
-2. Create your own private git repository on github.
-3. 
-4. 
-5. 
+1. More exercises on dplyr and ggplot with a different data frame
+2. Create your own git repository on github
+3. Saving your data to a file
+4. Dealing with NAs
+
 
 ## For the next lecture
 
