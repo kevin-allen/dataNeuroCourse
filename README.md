@@ -1,1 +1,10 @@
 # dataNeuroCourse
+
+This repository contains the materials for a course on data science and analysis in neuroscience. 
+
+The slide show is built using [R Markdown](https://rmarkdown.rstudio.com/). This is a type of document allowing you to mix normal text with code and the code output. I have 
+
+## Download this repository with git
+
+git clone https://github.com/kevin-allen/dataNeuroCourse.git
+
