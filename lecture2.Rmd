@@ -17,12 +17,22 @@ library(knitr)
 
 ## Today's plan
 
-1. Review exercises (15 minutes)
+1. Review exercises (10 minutes)
 2. RStudio editor and .R files. (10 minutes)
-3. git repositories (15 minutes)
+3. git repositories, part 1 (15 minutes)
 4. Introduction to ggplot2 (30 minutes)
-5. Introduction to dplyr (30 minutes)
-6. Example: Analysis of behavioral data (30 minutes)
+5. Get your data into R (10 minutes)
+6. Introduction to dplyr (30 minutes)
+7. Example: Analysis of behavioral data (30 minutes)
+
+## Review exercises
+
+1. What is the difference between `x = 5` and `x == 5`?
+2. `y = "moon"`, what type of object is `y`?
+3. How can I find out what type an object is?
+4. What is a data frame?
+5. How do I get information regarding the use of a built-in function (e.g., `mean`)?
+
 
 ## RStudio editor
 
@@ -38,10 +48,48 @@ knitr::include_graphics("images/rstudio-editor.png")
 
 1. Open a new R script (File/New File/R script).
 2. Execute a single expression: Cmd/Ctrl-Enter
-3. Execute the entire script: Cmd?Ctrl-Shift-S
-4. Don't inlcude install.packages() or setwd() in your script.
+3. Execute the entire script: Cmd/Ctrl-Shift-S
 
-See live example!
+## RStudio editor
+
+Create a R script. 
+Write this code in the RStudio editor, run the code and save it as `myFirstPlot.R`.
+
+```{r editor,eval=FALSE}
+library(tidyverse)
+ggplot(data=mpg) +
+  geom_point(mapping=aes(x=displ,y=hwy))
+```
+
+## git repositories
+
+1. Version control system to track changes in files in a directory
+2. Works with any programming languages.
+3. Takes snapshot of your files at any time
+4. Supports cooperative work
+5. Local and remote repositories (e.g., github servers) 
+6. Revert back to previous version
+
+## git repositories
+
+Why should I even bother?
+
+1. Prevent catastrophes (a real example)
+2. Force you to keep your code in order
+3. Easy way to share your code along with publications.
+
+I recommend creating a repository for any projects that involves programming.
+
+## git repositories
+
+An example of repository.
+
+[The course repository on github](https://github.com/kevin-allen/dataNeuroCourse)
+
+Live example.
+
+We will come back to git repositories when you have more code!
+
 
 ## An introduction to ggplot2
 
@@ -51,9 +99,15 @@ See live example!
 4. It works well with data frames.
 5. R also has base graphics, `plot()`
 
-## Create a plot
+## Load the car dataset (mpg)
 
 ```{r plot}
+library(tidyverse)
+print(mpg)
+```
+
+## Create a plot
+```{r plot05}
 ggplot(data=mpg) +
   geom_point(mapping = aes(x = displ, y = hwy))
 ```
@@ -169,11 +223,38 @@ ggplot(data = mpg) +
   geom_boxplot(mapping = aes(x=class,y=hwy))
 ```
 
+## Behavioural data set
+
+1. We trained mice on a spatial memory task called a rewarded alternation task.
+2. The t-maze has a start arm and two goal arms (right and left)
+3. Each trial has a forced run and choice run. 
+4. During the forced run, the animal is forced to go to one goal arm and receive a reward.
+5. During the choice run, the animal can choose which goal arm to enter. Only the non-visited arm contains food.
+6. We tested the effect of inactivation of the hippocampus on this task.
 
 
+```{r, echo=FALSE,out.width = "400px"}
+knitr::include_graphics("images/tmaze.jpg")
+```
 
+## Get your data into R
 
+Download the data set: https://tinyurl.com/r52pxm5
 
+Load the file in R
+
+```{r load}
+myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv"
+df<-read_csv(myFile)
+```
+
+## Get your data into R
+
+Have a look at what we got
+```{r load2}
+print(df)
+# or try view(df)
+```
 
 
 ## tidyverse
@@ -188,8 +269,7 @@ Advantages of tidyverse over built-in core R functions
 
 Disadvantage
 
-1. You need to load it before starting coding
-2. You need tidy data frames
+1. You need tidy data frames (like our t-maze data)
 
 ## tidyverse
 
@@ -199,13 +279,131 @@ library(tidyverse)
 
 ## Data transformation with dplyr
 
+1. Pick observations (rows) by their values: `filter()`
+2. Reorder the rows: `arrange()`
+3. Pick variable (columns) by names: `select()`
+4. Create new variables from existing variable: `mutate()`
+5. Collapse many values down to a single summary: `summarize()`
 
-## Exercise with dplyr
+## filter()
+Pick observations (rows) by their values. It uses logicals (TRUE or FALSE) to select the rows.
+```{r filter, results=FALSE}
+filter(df, injection=="Saline")
+filter(df, mouse=="Mn4656",block==1) # this uses AND, both needs to be true
+filter(df, block %in% c(1,2,3))
+```
+
+## arrange()
+Change the order of rows
+```{r arrange,results=FALSE}
+arrange(df,trialNo)
+arrange(df,desc(trialNo))
+```
+
+## select()
+
+It drops all columns that are not mentioned.
+
+```{r select, results=FALSE}
+select(df,mouse,sample,choice)
+select(df,starts_with("bl"))
+select(df,ends_with("e"))
+```
+
+## mutate()
+Add a new variable from old ones.
+
+```{r mutate,eval=TRUE,results=FALSE}
+mutate(df,correct=sample!=choice)
+
+# This was actually useful! Save the results
+df<-mutate(df,correct=sample!=choice)
+```
+
+## mutate
+
+Check if we got what we wanted
+
+```{r mutate2}
+select(df,sample,choice,correct)
+```
+
+## summarize()
+
+Collapse several rows into a single row.
+
+```{r summarize}
+summarize(df, performance = mean(correct))
+```
+
+## group_by and summarize()
+
+Collapse according to some groups.
+
+Group by mouse, then get the mean performance.
+
+```{r group_by}
+by_df<-group_by(df,mouse)
+summarise(by_df,performance= mean(correct))
+```
+## group_by and summarize()
+
+Group by mouse and block, then count the number of trials
+
+```{r group_by1}
+by_df<-group_by(df,mouse,block)
+summarise(by_df,noTrials= n())
+```
+
+## group_by and summarize()
+
+Group by mouse and block, count trials and get the mean performance
+
+```{r group_by2}
+by_df<-group_by(df,mouse,block)
+summarise(by_df,noTrials = n(), performance= mean(correct))
+```
+
+
+## Using Pipe
+
+Combine multiple operations with the Pipe: ` %>% ` 
+
+` %>% ` is like "then"
+
+`do_thid %>%  do_that %>% do_something_else`
+
+
+## Using Pipe
+
+```{r pipe,eval=FALSE}
+## without Pipe
+df_mouse<- filter(df,mouse=="Mn4656")
+df_mouse_sel<- select(df_mouse,mouse,block,trialNo,correct)
+df_mouse_sel_gb<-group_by(df_mouse_sel,block)
+summarise(df_mouse_sel_gb,performance=mean(correct))
+
+## with Pipe
+df %>% 
+  filter(mouse=="Mn4656") %>% 
+  select(mouse,block,trialNo,correct) %>% 
+  group_by(block) %>% 
+  summarize(performance=mean(correct))
+```
+
+
+## Exercise with dplyr and ggplot
 
 
 
 ## Next lecture
 
+1.
+2. Create your own private git repository on github.
+3. 
+4. 
+5. 
 
 ## For the next lecture
 
+1. Install git on your computer and clone the course repository (https://github.com/kevin-allen/dataNeuroCourse)
