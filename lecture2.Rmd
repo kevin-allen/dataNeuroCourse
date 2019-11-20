@@ -209,7 +209,7 @@ ggplot(data = mpg) +
 Continuous variable
 ```{r count1,out.width=500}
 ggplot(data = mpg) +
-  geom_histogram(mapping = aes(x=displ))
+  geom_histogram(mapping = aes(x=displ),binwidth = 0.1)
 ```
 
 ## Exercise 
@@ -392,7 +392,81 @@ df %>%
 ```
 
 
-## Exercise with dplyr and ggplot
+## Putting it all together (dplyr and ggplot)
+
+* Create a data frame in which you have the performance of single mice on single blocks. Use the Pipe! 
+
+***
+
+```{r ex0 }
+new_df<-df %>% 
+  group_by(mouse,block) %>% 
+  summarise(performance = mean(correct))
+```
+
+## Putting it all together (dplyr and ggplot)
+
+* Plot a histogram showing the distribution of performance on every block and mouse (mouse1-block1, mouse1-block2, mouseN-blockN). 
+
+***
+
+```{r ex1 }
+new_df<-df %>% 
+  group_by(mouse,block) %>% 
+  summarise(performance = mean(correct))
+ggplot (data=new_df) +
+  geom_histogram(mapping = aes(x = performance),binwidth=0.01)
+```
+
+## Put it all together (dplyr and ggplot)
+
+* The first 3 days of training (e.g, blocks) had 20 trials instead of 10. Plot the distribution of performance on every block and mouse, but only for blocks with 10 trials.
+
+***
+
+```{r ex2, fig.width = 6,fig.height=4}
+new_df<- df %>% 
+  group_by(mouse,block) %>% 
+  summarise(nTrials = n(), performance = mean(correct)) %>% 
+  filter(nTrials==10)
+ggplot (data=new_df) +
+  geom_histogram(mapping = aes(x = performance),binwidth=0.01)
+```
+
+## Put it all together (dplyr and ggplot)
+
+* Make a plot showing the mean performance of all mice on each block. Use geom_line or geom_point.
+
+***
+
+```{r ex3,fig.width = 6,fig.height=4}
+df %>% group_by(mouse,block) %>% 
+  summarise(performance = mean(correct)) %>% 
+  group_by(block) %>% 
+  summarise(global_performance = mean(performance)) %>% 
+  ggplot()+
+  geom_line(mapping=aes(x=block,y=global_performance))
+```
+
+
+
+## Put it all together (dplyr and ggplot)
+
+* Remember the facet_wrap function in ggplot? It can be used to plot several graphs into the same plot 
+
+Use facet_wrap to display the performance of each mouse separately 
+
+***
+
+```{r ex4,fig.width = 6,fig.height=4}
+df %>% group_by(mouse,block) %>% 
+  summarise(performance = mean(correct)) %>% 
+  ggplot()+
+  geom_point(mapping=aes(x=block,y=performance))+
+  geom_line(mapping=aes(x=block,y=performance))+
+  facet_wrap(~mouse)
+```
+
 
 
 
@@ -407,3 +481,4 @@ df %>%
 ## For the next lecture
 
 1. Install git on your computer and clone the course repository (https://github.com/kevin-allen/dataNeuroCourse)
+2. Read chapters 1, 2 and 3  of R for Data Science
