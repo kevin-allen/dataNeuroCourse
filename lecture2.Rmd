@@ -17,18 +17,18 @@ library(knitr)
 
 ## Today's plan
 
-1. Review exercises (10 minutes)
-2. RStudio editor and .R files. (10 minutes)
-3. git repositories, part 1 (15 minutes)
-4. Introduction to ggplot2 (30 minutes)
-5. Get your data into R (10 minutes)
-6. Introduction to dplyr (30 minutes)
-7. Example: Analysis of behavioral data (30 minutes)
+1. Review exercises
+2. RStudio editor and .R files
+3. git repositories, part 1
+4. Introduction to ggplot2
+5. Get your data into R
+6. Introduction to dplyr
+7. Example: Analysis of behavioral data
 
-## Review exercises
+## Reactivation exercises
 
 1. What is the difference between `x = 5` and `x == 5`?
-2. `y = "moon"`, what type of object is `y`?
+2. `y = "moon"`, what type of object is `y`? What are the other types?
 3. How can I find out what type an object is?
 4. What is a data frame?
 5. How do I get information regarding the use of a built-in function (e.g., `mean`)?
@@ -82,9 +82,9 @@ I recommend creating a repository for any projects that involves programming.
 
 ## git repositories
 
-An example of repository.
+An example of repository: The course repository on github.
 
-[The course repository on github](https://github.com/kevin-allen/dataNeuroCourse)
+https://github.com/kevin-allen/dataNeuroCourse
 
 Live example.
 
@@ -472,6 +472,7 @@ df %>% group_by(mouse,block) %>%
 ## Next lecture
 
 1. More exercises on dplyr and ggplot with a different data frame
+2. Combining information from 2 data frames
 2. Create your own git repository on github
 3. Saving your data to a file
 4. Dealing with NAs
