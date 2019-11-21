@@ -422,7 +422,7 @@ df %>%
 ***
 
 ```{r ex0 }
-new_df<-df %>% 
+df %>% 
   group_by(mouse,block) %>% 
   summarise(performance = mean(correct))
 ```
