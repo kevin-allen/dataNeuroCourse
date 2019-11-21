@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="105mm"
+   viewBox="0 0 210 105"
+   version="1.1"
+   id="svg8"
+   inkscape:export-filename="/home/kevin/repo/dataNeuroCourse/images/tibble_tmaze_group_by_summarise.png"
+   inkscape:export-xdpi="600"
+   inkscape:export-ydpi="600"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="tibble_tmaze_group_by_summarise.svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="437.36472"
+     inkscape:cy="381.98752"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1853"
+     inkscape:window-height="1025"
+     inkscape:window-x="67"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-192)">
+    <rect
+       style="opacity:0.98000004;fill:#323232;fill-opacity:0.19607843;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect918"
+       width="50.246674"
+       height="67.052628"
+       x="14.405694"
+       y="221.77919" />
+    <rect
+       style="opacity:0.98000004;fill:#643232;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect920"
+       width="52.919369"
+       height="20.656021"
+       x="78.49128"
+       y="221.78238" />
+    <rect
+       y="242.4384"
+       x="78.49128"
+       height="24.645121"
+       width="52.919369"
+       id="rect922"
+       style="opacity:0.98000004;fill:#323232;fill-opacity:0.19607843;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <rect
+       style="opacity:0.98000004;fill:#326432;fill-opacity:0.39215686;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect924"
+       width="52.919369"
+       height="21.609375"
+       x="78.49128"
+       y="267.08353" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="23.225588"
+       y="219.37376"
+       id="text928"><tspan
+         sodipodi:role="line"
+         id="tspan926"
+         x="23.225588"
+         y="219.37376"
+         style="font-size:4.93888903px;stroke-width:0.26458332">data frame</tspan></text>
+    <text
+       id="text932"
+       y="219.37376"
+       x="79.846466"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="font-size:4.93888903px;stroke-width:0.26458332"
+         y="219.37376"
+         x="79.846466"
+         id="tspan930"
+         sodipodi:role="line">grouped data frame</tspan></text>
+    <rect
+       y="234.20552"
+       x="141.57764"
+       height="13.982536"
+       width="52.919369"
+       id="rect934"
+       style="opacity:0.98000004;fill:#643264;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="142.79237"
+       y="219.55528"
+       id="text938"><tspan
+         sodipodi:role="line"
+         x="142.79237"
+         y="219.55528"
+         style="font-size:4.93888903px;line-height:0;stroke-width:0.26458332"
+         id="tspan952">summary of groups</tspan></text>
+    <text
+       id="text942"
+       y="207.27853"
+       x="59.662495"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="font-size:4.93888903px;stroke-width:0.26458332"
+         y="207.27853"
+         x="59.662495"
+         id="tspan940"
+         sodipodi:role="line">group_by()</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="124.44761"
+       y="207.53537"
+       id="text946"><tspan
+         sodipodi:role="line"
+         id="tspan944"
+         x="124.44761"
+         y="207.53537"
+         style="font-size:4.93888903px;stroke-width:0.26458332">summarise()</tspan></text>
+    <text
+       id="text958"
+       y="226.43445"
+       x="143.32153"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"
+       inkscape:export-xdpi="600"
+       inkscape:export-ydpi="600"><tspan
+         id="tspan956"
+         style="font-size:4.93888903px;line-height:0;stroke-width:0.26458332"
+         y="226.43445"
+         x="143.32153"
+         sodipodi:role="line">one row per group</tspan></text>
+  </g>
+</svg>
