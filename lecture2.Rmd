@@ -1,0 +1,59 @@
+---
+title: "Data science and analysis in Neuroscience"
+author: "Kevin Allen"
+date: "November 21, 2019"
+output:
+  ioslides_presentation: default
+  slidy_presentation: default
+  beamer_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+```
+
+
+## Today's plan
+
+1. Review exercises
+2. Saving you code as .R files.
+3. git repositories (create one!)
+3. dplyr
+4. Example: Analysis of behavioural data
+
+
+## tidyverse
+
+`tidyverse` is a collection of R packages for data science.
+
+Advantages of tidyverse over built-in core R functions
+
+1. Code is easier to understand 
+2. Code is easier to read 
+3. Easier to learn
+
+Disadvantage
+
+1. You need to load it before starting coding
+2. You need tidy data frames
+
+## tidyverse
+
+```{r tidy1, results = 'hide'}
+library(tidyverse)
+```
+
+## Data transformation with dplyr
+
+
+## Exercise with dplyr
+
+
+
+## Next lecture
+
+
+## For the next lecture
+
