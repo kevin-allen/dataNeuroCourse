@@ -415,6 +415,7 @@ df %>%
 ```
 
 
+
 ## Putting it all together (dplyr and ggplot)
 
 * Create a data frame in which you have the performance of single mice on single blocks. Use the Pipe! 
