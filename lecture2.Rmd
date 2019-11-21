@@ -20,10 +20,10 @@ library(knitr)
 1. Review exercises
 2. RStudio editor and .R files
 3. git repositories, part 1
-4. Introduction to ggplot2
-5. Get your data into R
-6. Introduction to dplyr
-7. Example: Analysis of behavioral data
+4. ggplot2
+5. Get behavioral data into R
+6. dplyr
+7. Exercises: dplyr and ggplot2
 
 ## Reactivation exercises
 
@@ -52,8 +52,8 @@ knitr::include_graphics("images/rstudio-editor.png")
 
 ## RStudio editor
 
-Create a R script. 
-Write this code in the RStudio editor, run the code and save it as `myFirstPlot.R`.
+Create an R script. 
+Write this code in the RStudio editor, run the code, and save it as `myFirstPlot.R`.
 
 ```{r editor,eval=FALSE}
 library(tidyverse)
@@ -67,7 +67,7 @@ ggplot(data=mpg) +
 2. Works with any programming languages.
 3. Takes snapshot of your files at any time
 4. Supports cooperative work
-5. Local and remote repositories (e.g., github servers) 
+5. Local and remote repositories (e.g., GitHub servers) 
 6. Revert back to previous version
 
 ## git repositories
@@ -78,11 +78,11 @@ Why should I even bother?
 2. Force you to keep your code in order
 3. Easy way to share your code along with publications.
 
-I recommend creating a repository for any projects that involves programming.
+I recommend creating a repository for any projects that involve programming.
 
 ## git repositories
 
-An example of repository: The course repository on github.
+An example of a repository: The course repository on GitHub.
 
 https://github.com/kevin-allen/dataNeuroCourse
 
@@ -98,6 +98,12 @@ We will come back to git repositories when you have more code!
 3. You get nice looking graphs relatively quickly.
 4. It works well with data frames.
 5. R also has base graphics, `plot()`
+
+```{r, echo=FALSE,out.width = "600px"}
+knitr::include_graphics("images/data-science.png")
+```
+
+Figure from "R for Data Science"
 
 ## Load the car dataset (mpg)
 
@@ -163,11 +169,9 @@ ggplot(data = mpg) +
 
 ## Geometric objects
 
-Show different types of graphs
-
-There are up to 30 types of geoms. 
-
-You can mix geoms.
+* Used to show different types of graphs
+* There are up to 30 types of geoms. 
+* You can mix geoms.
 
 ## Geometric objects
 
@@ -230,32 +234,32 @@ ggplot(data = mpg) +
 3. Each trial has a forced run and choice run. 
 4. During the forced run, the animal is forced to go to one goal arm and receive a reward.
 5. During the choice run, the animal can choose which goal arm to enter. Only the non-visited arm contains food.
-6. We tested the effect of inactivation of the hippocampus on this task.
 
 
 ```{r, echo=FALSE,out.width = "400px"}
 knitr::include_graphics("images/tmaze.jpg")
 ```
 
-## Get your data into R
+## Download a data set
 
 Download the data set: https://tinyurl.com/r52pxm5
+or here: https://github.com/kevin-allen/dataNeuroCourse/tree/master/dataSets
 
-Load the file in R
+## Load the data set in R
 
 ```{r load}
-myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv"
+# path to your downloaded file
+myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv" 
+
 df<-read_csv(myFile)
 ```
 
-## Get your data into R
+## Inspect the data set
 
-Have a look at what we got
 ```{r load2}
 print(df)
-# or try view(df)
+view(df)
 ```
-
 
 ## tidyverse
 
@@ -293,6 +297,11 @@ filter(df, mouse=="Mn4656",block==1) # this uses AND, both needs to be true
 filter(df, block %in% c(1,2,3))
 ```
 
+Main idea:
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/tibble_tmaze_filter.png")
+```
+
 ## arrange()
 Change the order of rows
 ```{r arrange,results=FALSE}
@@ -308,6 +317,11 @@ It drops all columns that are not mentioned.
 select(df,mouse,sample,choice)
 select(df,starts_with("bl"))
 select(df,ends_with("e"))
+```
+
+Main idea: 
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/tibble_tmaze_select.png")
 ```
 
 ## mutate()
@@ -336,28 +350,33 @@ Collapse several rows into a single row.
 summarize(df, performance = mean(correct))
 ```
 
-## group_by and summarize()
+## group_by and summarise()
 
 Collapse according to some groups.
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/tibble_tmaze_group_by_summarise.png")
+```
 
+
+## group_by and summarise()
 Group by mouse, then get the mean performance.
 
 ```{r group_by}
 by_df<-group_by(df,mouse)
 summarise(by_df,performance= mean(correct))
 ```
-## group_by and summarize()
+## group_by and summarise()
 
-Group by mouse and block, then count the number of trials
+Group by mouse and block, then count the number of trials.
 
 ```{r group_by1}
 by_df<-group_by(df,mouse,block)
 summarise(by_df,noTrials= n())
 ```
 
-## group_by and summarize()
+## group_by and summarise()
 
-Group by mouse and block, count trials and get the mean performance
+Group by mouse and block, count trials and get the mean performance.
 
 ```{r group_by2}
 by_df<-group_by(df,mouse,block)
@@ -480,5 +499,6 @@ df %>% group_by(mouse,block) %>%
 
 ## For the next lecture
 
+1. Review ggplot and dplyr exercises.
 1. Install git on your computer and clone the course repository (https://github.com/kevin-allen/dataNeuroCourse)
 2. Read chapters 1, 2 and 3  of R for Data Science
