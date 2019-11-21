@@ -61,6 +61,10 @@ ggplot(data=mpg) +
   geom_point(mapping=aes(x=displ,y=hwy))
 ```
 
+## R history
+
+See history tab (top-right)
+
 ## git repositories
 
 1. Version control system to track changes in files in a directory
