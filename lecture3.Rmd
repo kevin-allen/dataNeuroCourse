@@ -24,6 +24,13 @@ library(knitr)
 5. git: create your git repository on github
 
 
+## Today's objective
+
+```{r, echo=FALSE,out.width = "500px"}
+knitr::include_graphics("images/summary_4plots.png")
+```
+
+
 ## Review: ggplot
 
 ```{r review_ggplot}
@@ -214,6 +221,7 @@ df %>% group_by(mouse,block) %>%
 ***
 
 ```{r ex4,fig.width = 4,fig.height=3}
+
 df1 <- df %>% group_by(mouse,block) %>% 
   summarise(performance = mean(correct)*100)
 ggplot(data=df1) +
@@ -328,7 +336,9 @@ p1 <- df %>%
   summarise(nTrials = n(), performance = mean(correct)) %>%
   filter(nTrials == 10) %>% 
   ggplot () +
-    geom_histogram(mapping = aes(x = performance), binwidth = 0.01)
+    geom_histogram(mapping = aes(x = performance), binwidth = 0.01) +
+    xlab("Performance (prob.)") +
+    ylab("Count")
 ```
 
 ***
@@ -366,8 +376,7 @@ p3 <-df %>% group_by(mouse,block) %>%
 p4 <- df %>% group_by(mouse,block) %>% 
   summarise(performance = mean(correct)) %>% 
   ggplot() +
-  geom_boxplot(mapping=aes(x=block,y=performance,group=block),color="blue") +
-  ggtitle("Performance per block") +
+  geom_boxplot(mapping=aes(x=block,y=performance*100,group=block),color="blue") +
   ylab("Performance (%)") +
   xlab("Block")
 ```
