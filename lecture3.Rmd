@@ -21,8 +21,7 @@ library(knitr)
 2. More exercises on dplyr and ggplot
 3. Saving a graph
 4. Plot with several graphs
-5. Communicate your results
-6. git: create your git repository on github
+5. git: create your git repository on github
 
 
 ## Review: ggplot
@@ -107,6 +106,8 @@ ggplot(data=mpg) +
 ## Work with dplyr and ggplot
 
 * Create a data frame in which you have the performance of single mice on single blocks. Use the Pipe! 
+
+* Save the code from these exercises for later.
 
 ***
 
@@ -231,7 +232,7 @@ ggplot(data=df1) +
 
 ***
 
-```{r sevGraphs2, fig.width = 5,fig.height=2}
+```{r exp5, fig.width = 5,fig.height=2}
 #df1 is the data frame we just created 
 df1 %>% 
   ggplot() +
@@ -245,7 +246,7 @@ Do you see any problems with this plot?
 
 Use some jitter to solve overplotting. This solve the overplotting but is less precise!
 
-```{r sevGraphs22, fig.width = 5,fig.height=2}
+```{r exp6, fig.width = 5,fig.height=2}
 df1 %>% 
   ggplot() +
   geom_point(mapping=aes(x=block,y=performance),position="jitter")+
@@ -257,7 +258,7 @@ Most people will not like this solution. The block separation is gone.
 
 ***
 
-```{r sevGraphs10, fig.width = 5,fig.height=2}
+```{r exp7, fig.width = 5,fig.height=2}
 df1 %>% 
 ggplot( aes(x = factor(block), y = performance)) +
   geom_dotplot(binaxis = "y", stackdir = "center") +
@@ -270,7 +271,7 @@ Each point now clearly belongs to a block. This is pretty good.
 
 ***
 
-```{r sevGraphs1, fig.width = 3,fig.height=2}
+```{r exp8, fig.width = 3,fig.height=2}
 df1 <- df %>% group_by(mouse,block) %>% 
   summarise(performance = mean(correct))
 df1 %>% 
@@ -280,27 +281,121 @@ df1 %>%
 
 This is also pretty good.
 
-## Saving a graphs
+## Saving a graph
+
+```{r save1, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/rstudio-export-figure.png")
+```
+
+## Saving a graph
+
+`ggsave()` saves the latest plot that was displayed
+
+```{r save2,  fig.width = 3,fig.height=2,results=FALSE}
+df1 %>% 
+  ggplot() +
+  geom_boxplot(mapping=aes(x=block,y=performance,group=block))
+
+myFileName="/home/kevin/Downloads/myPlot.pdf"
+ggsave(filename = myFileName,
+       device = "pdf", units = "cm", 
+       width = 10, height = 10)
+```
 
 
 ## Plot with several graphs
 
-We have created several interesting graphs. But how do you 
-
-
-
-## Communicate your results
- 
 * Store graphs as variables
 
-```{r sevGraphs4, fig.width = 3,fig.height=2}
-df1 <- df %>% group_by(mouse,block) %>% 
-  summarise(performance = mean(correct))
-df1 %>% 
+```{r sevGraphs1, fig.width = 3,fig.height=2}
+p1<- df1 %>% 
   ggplot() +
-  geom_boxplot(mapping=aes(x=block,y=performance,group=block))+
+  geom_boxplot(mapping=aes(x=block,y=performance,group=block),color="blue")+
   ggtitle("Performance per block")
 ```
 
+```{r sevGraphs2,fig.width = 3,fig.height=2}
+p1
+```
+
+## Plot with several graphs
+
+Let's store several graphs in variables
+
+```{r, sevGraphs3}
+p1 <- df %>%
+  group_by(mouse, block) %>%
+  summarise(nTrials = n(), performance = mean(correct)) %>%
+  filter(nTrials == 10) %>% 
+  ggplot () +
+    geom_histogram(mapping = aes(x = performance), binwidth = 0.01)
+```
+
+***
+
+```{r sevGraphs4}
+p2 <- df %>% group_by(mouse,block) %>% 
+  summarise(performance = mean(correct)*100) %>%
+  group_by(block) %>% 
+  summarise(global_performance = mean(performance)) %>% 
+  ggplot() +
+  geom_line(mapping=aes(x=block,y=global_performance),color="blue")+
+  ylim(40,100) +
+  xlab("Block") +
+  ylab("Performance (%)")+
+  geom_hline(mapping = aes(yintercept=50),linetype="dashed")
+```
+
+***
+
+```{r sevGraphs5}
+p3 <-df %>% group_by(mouse,block) %>% 
+  summarise(performance = mean(correct)*100) %>% 
+  ggplot() +
+    geom_point(mapping=aes(x=block,y=performance)) +
+    geom_line(mapping=aes(x=block,y=performance),color = "blue") +
+    ylab("Performance (%)") +
+    xlab("Block") +
+    geom_hline(mapping = aes(yintercept=50),linetype="dashed") +
+    facet_wrap(~mouse)
+```
+
+***
+
+```{r sevGraphs6}
+p4 <- df %>% group_by(mouse,block) %>% 
+  summarise(performance = mean(correct)) %>% 
+  ggplot() +
+  geom_boxplot(mapping=aes(x=block,y=performance,group=block),color="blue") +
+  ggtitle("Performance per block") +
+  ylab("Performance (%)") +
+  xlab("Block")
+```
+
+***
+
+Now put these graphs together.
+
+```{r sevGraphs7, fig.width = 6,fig.height=4}
+library(grid)
+library(gridExtra)
+```
+
+***
+
+```{r sevGraphs8, fig.width = 6,fig.height=5}
+grid.arrange(p1, p2, p3, p4, ncol=2)
+```
+
+***
+
+Use `pdf()` and `dev.off()` to save your new creation.
+
+```{r sevGraphs9}
+myFileName="/home/kevin/Downloads/allMyPlots.pdf"
+pdf(file=myFileName,paper = "a4") # open the file
+all_ps <- grid.arrange(p1, p2, p3, p4, ncol=2) # write
+dev.off() # close the file
+```
 
 ## git: create your git repository on github
