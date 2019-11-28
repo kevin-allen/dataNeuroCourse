@@ -122,7 +122,7 @@ ggplot(data=mpg) +
 
 * Create a data frame in which you have the performance of single mice on single blocks. Use the Pipe! 
 
-* Use RStudio editor and save your code for later.
+* Use the RStudio editor and save your code for later.
 
 ***
 
@@ -415,4 +415,62 @@ all_ps <- grid.arrange(p1, p2, p3, p4, ncol=2) # write
 dev.off() # close the file
 ```
 
-## git: create your git repository on github
+## git: install 
+
+Install git on your computer
+
+* Windows and Mac: (http://git-scm.com/downloads)
+* linux: `sudo apt-get install git-core`
+
+Example for Windows : Download for Windows, Run executable, license next,  default location, will install git bash. Use Git and optional Unix tools from the Windows Command Prompt, 3 x next with default
+
+## Set up RStudio
+
+1. Go to Global Options (from the Tools menu)
+2. Click Git/SVN
+3. Click Enable version control interface for RStudio projects
+
+For more [information](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN)
+
+## Create a repository on GitHub.
+
+1. Create an account at [GitHub](https://github.com/) and verify your email
+2. Log in
+3. Click New repository
+4. Set repository name: myNotesDataScience, set to private, check Initialize this repository with a README
+5. Click Create repository
+
+
+## Create a project with RStudio from your repository
+
+1. Copy the urs of your repository from the github web site. It ends with `.git`
+2. Open RStudio, New Project..., Version Control, Git, 
+3. Enter the url and set directory.
+4. Create project.
+
+## Your first commit and push
+1. Click on commit.
+2. Make sure `myNotesDataScience.Rproj` is staged.
+3. Set commit message to `my first commit`
+4. Click commit
+5. Click on the up arrow to push your commit to the online repository.
+6. Refresh your web browser to see `myNotesDataScience.Rproj` online.
+
+## Next steps...
+
+All you will have to do most of the time.
+
+1. Save the file with your R code in your project directory.
+2. Stage the file
+3. Commit
+4. Push
+
+
+<!-- ## Set up git for your new repository 
+1. Launch git bash.
+2. type `cd` and `enter`
+3. type `mkdir repo` to create a directory called `repo` in your home directory.
+4. `cd repo`
+5. `git config --global user.name "Your name"`
+6. `git config --global user.email "youremail@hello.com"`
+-->
