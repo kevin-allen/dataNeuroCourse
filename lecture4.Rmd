@@ -20,7 +20,7 @@ library(knitr)
 2. Saving a graph
 3. Plot with several graphs
 4. git: create your git repository on github
-
+5. Relational data with dplyr
 
 ## dplyr and ggplot
 
@@ -330,6 +330,14 @@ For more [information](https://support.rstudio.com/hc/en-us/articles/200532077-V
 5. Click on the up arrow to push your commit to the online repository.
 6. Refresh your web browser to see `myNotesDataScience.Rproj` online.
 
+<!-- ## Set up git for your new repository 
+  1. Launch git bash.
+2. type `cd` and `enter`
+3. type `mkdir repo` to create a directory called `repo` in your home directory.
+4. `cd repo`
+5. `git config --global user.name "Your name"`
+6. `git config --global user.email "youremail@hello.com"`
+-->
 ## Next steps with git...
 
 All you will have to do most of the time.
@@ -339,12 +347,67 @@ All you will have to do most of the time.
 3. Commit
 4. Push
 
+## Relational data with dplyr
 
-<!-- ## Set up git for your new repository 
-  1. Launch git bash.
-2. type `cd` and `enter`
-3. type `mkdir repo` to create a directory called `repo` in your home directory.
-4. `cd repo`
-5. `git config --global user.name "Your name"`
-6. `git config --global user.email "youremail@hello.com"`
--->
+In most project, you need to work with several tables. 
+
+Relations are defined between a pair of tables.
+
+## Relational data with dplyr
+
+Let's assign a genotype to each mouse in a new data frame.
+
+```{r relational1}
+dfGeno<-tibble(mouse=c("Mn4656","Mn848","Mn4672","Mn4673",
+                           "Mn7712","Mn7735","Mn829"),
+           genotype=c("wt","wt","wt","wt",
+                      "ko","ko","ko"))
+dfGeno
+```
+
+***
+
+How is `df` related to `dfGeno`?
+
+```{r relational2}
+colnames(df)
+colnames(dfGeno)
+colnames(dfGeno)[colnames(dfGeno) %in% colnames(df)]
+```
+`mouse` is a **key**, a variable that connect a pair of tables.
+
+***
+
+* A **primary key** uniquely identifies an observation in its table.
+
+```{r relational3}
+dfGeno %>% 
+  count(mouse)
+
+```
+
+***
+
+* A **foreign key** uniquely identifies an observation in *another* table.
+
+```{r relational4}
+df %>% 
+  count(mouse)
+```
+
+## Mutating joins
+
+* It first matches observation by their keys.
+* Then copies across variables from one table to the other.
+
+```{r relational5}
+df<- df %>% 
+  left_join(dfGeno,by="mouse") # match with mouse
+view(df)
+```
+We now have an additional variable (genotype) in df.
+
+## (End - 1)
+
+Time to commit and push your changes to your online repository.
+
