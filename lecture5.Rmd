@@ -1,0 +1,98 @@
+---
+title: "Data science and analysis in Neuroscience"
+author: "Kevin Allen"
+date: "December 12, 2019"
+output:
+  ioslides_presentation: default
+  beamer_presentation: default
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+```
+
+## Brief introduction to machine learning
+
+1. Definition
+2. Prediction versus inference
+3. Supervised versus unsupervised
+4. Regression versus classification
+5. Instance-based versus model-based learning
+6. Challenges
+7. Testing and validating
+8. Linear regression
+9. Classification
+
+## Definition of machine learning
+
+Machine learning is the field of study that gives computer the ability to learn without being explicitely programmed.
+
+-- Arthur Samuel, 1959
+
+A computer program is daid to learn from experience E with respect to some task T and some performance measure P, if its performance on T, as measured by P, improves with experience E. 
+
+-- Tom Mitchell, 1997
+
+Examples : A spam filter learns to classify emails (spam versus legitimate) based on training set. The spam filter learns which words predict which emails are spam. 
+
+## Definition of machine learning
+
+
+* $p$ different inputs (predictors): $X_{1}, X_{2}, X_{3},...,X_{p}$
+* Response: $Y$
+* Unknown function: $f()$
+* Random error: $\epsilon$
+
+<center>
+$Y = f(X) + \epsilon$
+</center>
+
+<br>
+Machine learning refers to a set of approaches for estimating $f$.
+
+## Training and test sets
+
+A **training set** is our observed data points that is used to estimate $f$. Our training set has $n$ observations.
+
+A **test set** is used to test how accurate our model is. Not used for trainint!
+
+
+
+## Prediction versus inference
+
+Why do we want to estimate $f$?
+
+<center>
+$\hat Y = \hat f(X)$
+</center>
+
+### Prediction
+* We focus on predicting $Y$ ($\hat Y$).
+* $\hat f$ is treated as a black box.
+
+### Inference
+* Understand how $Y$ is affected as $X_{1},..., X_{p}$ changes.
+* Which predictors are associated with the response?
+* Is the relation between $Y$ and each predictor adequately summarized using a linear equation?
+
+
+## Supervised versus unsupervised
+
+### Supervised
+* The training set contains labelled data.
+* For each observation of the predictors $X_{i}, i = 1,...,n$ there is a known response measurement $y_{i}$.
+* Examples: linear regression, logistic regression, support vector machines, etc.
+
+### Unsupervised
+* The training set is not labelled.
+* For each observation $i = 1,...,n$, we observed a vector of measurments $X_{i}, but no response $y_{i}.
+* Example: cluster analysis. Do the observations fall into groups?
+
+
+
+## Regression versus classification
+
+
