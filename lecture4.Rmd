@@ -32,25 +32,23 @@ df<-read_csv(myFile)
 df<-mutate(df, correct = sample != choice)
 ```
 
-*** 
-
-```{r df}
-df
-```
-
 ## dplyr and ggplot
 
 The is a possibility that some mice had a bad performance because they always visited the same goal arm instead of alternating. 
 
 How could we process the data to get a score per mouse telling us if the mouse always choose the same arm?
 
-***
 
-Always break down your programming task into smaller tasks.
+## Break down your programming task into smaller tasks.
 
 * Which column contains this information?
-* How can we go from the values in the column to a statistic?
-* What type(s) of plots to choose?
+* How can we go from the values in this column to a statistic (number)?
+* Once you have the information, choose a plot?
+
+Alternatively
+
+* Imagine which plot would convey your message best (draw some on paper)
+* Find out which steps are needed to produce this graph.
 
 ***
 
@@ -66,7 +64,7 @@ head(df,n=5)
 
 Now summarize this information as a new variable for each mouse on each block.
 
-Also get the performance as before.
+Also get the performance from the `correct` column, as done last week.
 
 ***
 
@@ -79,8 +77,7 @@ df1
 
 ***
 
-Plot the distribution of nonAlternation.
-
+To know if mice prefer left or right turns, plot the distribution of nonAlternation.
 
 *** 
 
@@ -162,7 +159,7 @@ df %>%
   summarise(nonAlternance = mean(turn),performance = mean(correct)) %>% 
   ggplot(mapping=aes(x=nonAlternance,y=performance)) +
   geom_point() +
-  geom_text(aes(label=mouse),hjust=0,vjust=0) +
+  geom_text(aes(label=mouse),hjust=-0.1,vjust=0.5) +
   xlim(0.2,0.8)
 ```
 
@@ -211,7 +208,7 @@ p1
 
 ## Plot with several graphs
 
-Let's store several graphs in variables
+Let's store several graphs in variables p1, p2, p3 and p4.
 
 ```{r, sevGraphs3}
 p1 <- df %>%
@@ -281,7 +278,7 @@ grid.arrange(p1, p2, p3, p4, ncol=2)
 
 ***
   
-  Use `pdf()` and `dev.off()` to save your new creation.
+Use `pdf()` and `dev.off()` to save your new creation.
 
 ```{r sevGraphs9}
 myFileName="/home/kevin/Downloads/allMyPlots.pdf"
@@ -289,6 +286,8 @@ pdf(file=myFileName,paper = "a4") # open the file
 all_ps <- grid.arrange(p1, p2, p3, p4, ncol=2) # write
 dev.off() # close the file
 ```
+
+I usually add the final touch to the graphs using [Inkscape](https://inkscape.org/).
 
 ## git: install 
 
@@ -409,5 +408,7 @@ We now have an additional variable (genotype) in df.
 
 ## (End - 1)
 
-Time to commit and push your changes to your online repository.
+This is all for today. 
+
+Time to use `git` to `commit` and `push` your changes to your online repository.
 

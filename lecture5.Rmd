@@ -26,6 +26,15 @@ library(knitr)
 8. Linear regression
 9. Classification
 
+## Scope and objective
+
+We only have 2 lectures to cover this vast topic.
+
+The aim is to understand what is machine learning and experiment with a few examples. 
+
+Try to envisage how machine learning can help you as a scientist.
+
+
 ## Definition of machine learning
 
 Machine learning is the field of study that gives computer the ability to learn without being explicitely programmed.
