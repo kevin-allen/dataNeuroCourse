@@ -406,6 +406,8 @@ view(df)
 ```
 We now have an additional variable (genotype) in df.
 
+For more information: [Relational data and dplyr](https://r4ds.had.co.nz/relational-data.html)
+
 ## (End - 1)
 
 This is all for today. 
