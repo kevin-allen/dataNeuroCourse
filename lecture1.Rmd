@@ -16,6 +16,7 @@ library(knitr)
 ```
 
 ## Today's plan
+
 1. Overview of the course
 2. Assessment of previous experience
 3. Data science landscape and RStudio
@@ -143,6 +144,12 @@ We will use `python` for our `deeplabcut` project.
 knitr::include_graphics("images/rstudio-editor.png")
 ```
 
+## Tips
+
+* Create a directory called **myNotesDataScience** on your computer.
+* Use the code editor if you want to save your code for later use.
+* Save your R scripts into your directory. Use one script per lecture (e.g., lecture1.R).
+* Send a line of code from editor to R console with `Cmd/Ctrl-Enter`.
 
 ## Introduction to R 
 
