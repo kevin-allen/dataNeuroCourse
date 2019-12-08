@@ -21,18 +21,17 @@ library(knitr)
 3. Supervised versus unsupervised
 4. Regression versus classification
 5. Instance-based versus model-based learning
-6. Challenges
 7. Testing and validating
+8. Quizz!
 8. Linear regression
 9. Classification
+6. Challenges
 
 ## Scope and objective
 
 We only have 2 lectures to cover this vast topic.
 
-The aim is to understand what is machine learning and experiment with a few examples. 
-
-Try to envisage how machine learning can help you as a scientist.
+The aim is to understand what machine learning is and experiment with a few examples. 
 
 
 ## Definition of machine learning
@@ -45,7 +44,7 @@ A computer program is daid to learn from experience E with respect to some task 
 
 -- Tom Mitchell, 1997
 
-Examples : A spam filter learns to classify emails (spam versus legitimate) based on training set. The spam filter learns which words predict which emails are spam. 
+Examples : A program learns to decide whether an email is spam or not based on training set. 
 
 ## Definition of machine learning
 
@@ -61,13 +60,6 @@ $Y = f(X) + \epsilon$
 
 <br>
 Machine learning refers to a set of approaches for estimating $f$.
-
-## Training and test sets
-
-A **training set** is our observed data points that is used to estimate $f$. Our training set has $n$ observations.
-
-A **test set** is used to test how accurate our model is. Not used for trainint!
-
 
 
 ## Prediction versus inference
@@ -88,20 +80,127 @@ $\hat Y = \hat f(X)$
 * Is the relation between $Y$ and each predictor adequately summarized using a linear equation?
 
 
-## Supervised versus unsupervised
+## Supervised versus unsupervised versus reinforcement learning
 
 ### Supervised
 * The training set contains labelled data.
 * For each observation of the predictors $X_{i}, i = 1,...,n$ there is a known response measurement $y_{i}$.
-* Examples: linear regression, logistic regression, support vector machines, etc.
+* Example: linear regression
 
 ### Unsupervised
-* The training set is not labelled.
-* For each observation $i = 1,...,n$, we observed a vector of measurments $X_{i}, but no response $y_{i}.
-* Example: cluster analysis. Do the observations fall into groups?
+* Uncovering hidden patterns from unlabelled data.
+* For each observation $i = 1,...,n$, we observed a vector of measurments $X_{i}$, but no response $y_{i}$.
+* Example: cluster analysis
 
+## Reinforcement learning
 
+* Software agent interact with an environment.
+* The agent learns to optimize its behavior given a set of rules about rewards and punishments
+* Example: AlphaGo beating the human world champion in Go.
 
 ## Regression versus classification
+
+* If $Y$ is a continuous variable, then it is a regression task.
+* If $Y$ is a categorical variable, then it is a classification task.
+
+## Training and test sets
+
+A **training set** is our observed data points that is used to estimate $f$. Our training set has $n$ observations.
+
+A **test set** is used to test how accurate our model is. Not used for trainint!
+
+## Time for a quizz!
+
+
+## Linear regression
+
+* One of the simplest model to explain your data.
+* $Y = aX + b$
+* $Y$: target
+* $X$: features (inputs)
+* $a$ and $b$ are parameters of the model.
+* $a$ is the slope and $b$ is the intercept.
+* The task is to find the best $a$ and $b$.
+* Define an error or loss function to assess any possible line ($a$ and $b$).
+* Find the line that minimize the error function.
+
+## Example of a line
+
+```{r line, fig.width = 3,fig.height = 3}
+a=2
+b=5
+X=seq(from = 0, to = 35, by = 1) # some input values in X
+df<-data.frame(X = X, Y = X * a + b) # our line formula
+df %>% ggplot(mapping=aes(x=X,y=Y)) +
+  geom_line() +
+  xlim(0,80) +
+  ylim(0,80) 
+  
+```
+
+## Our task for today
+
+Our mice appeared to have improved their performance across training blocks. Use a linear regression to estimate how much mice improved between each block.
+
+```{r load}
+{
+myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv" 
+df<-read_csv(myFile)
+df<-mutate(df, correct = sample != choice)
+
+d <- df %>% 
+  group_by(mouse,block) %>% 
+  summarise(performance = 100 * mean(correct))
+}
+```
+
+## Our data
+
+```{r ourData,fig.width = 5, fig.height = 3}
+d %>% 
+  ggplot(mapping = aes(x=block,y=performance)) +
+  geom_point(position="jitter")
+```
+
+## Which line is the best fit for our data?
+
+```{r lines, fig.width = 3, fig.height = 2}
+models<-tibble( # create a data frame with 500 random lines
+  a = runif(n = 500, min = -5, max = 5), # slope
+  b = runif(n = 500, min = 20, max = 80) # intercept
+)
+ggplot()+
+  geom_point(mapping=aes(x=block,y=performance),position="jitter", data=d)+
+  geom_abline(mapping=aes(intercept=b, slope=a), alpha=0.1, data=models)+
+  xlim(0,14)+
+  ylim(20,105)
+```
+
+## Loss function
+
+* Based on residuals.
+* Residuals: difference between the observed value and the predicted value (line).
+* Often used: Sum of the squares of residuals
+* Find the line which minimise the loss function
+
+```{r lm,echo=FALSE,fig.width = 6, fig.height = 3}
+dm<-d
+# add a bit of noise to block so that the points are not on top of each other
+dm$block<-dm$block + runif(n = length(d$block), min = -0.5, max = 0.5)
+# fit a linear model to the data
+fit<-lm(performance~block,data = dm)
+# get predicted values and residuals
+dm$predicted<-predict(fit)
+dm$residuals<-residuals(fit)
+# plot 
+ggplot(data=dm, mapping = aes(x=block,y=performance))+
+  geom_segment(aes(xend = block, yend = predicted),alpha = 0.2) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red")
+```
+
+
+
+
 
 
