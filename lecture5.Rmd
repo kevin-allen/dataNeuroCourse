@@ -200,6 +200,7 @@ ggplot(data=dm, mapping = aes(x=block,y=performance))+
 ```
 
 
+## Loss function
 
 
 
