@@ -291,6 +291,8 @@ I usually add the final touch to the graphs using [Inkscape](https://inkscape.or
 
 ## git: install 
 
+Make sure you save any R script open in RStudio. 
+
 Install git on your computer
 
 * Windows and Mac: (http://git-scm.com/downloads)

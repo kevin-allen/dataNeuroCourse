@@ -14,25 +14,22 @@ library(tidyverse)
 library(knitr)
 ```
 
-## Brief introduction to machine learning
+## A brief introduction to machine learning
 
 1. Definition
 2. Prediction versus inference
 3. Supervised versus unsupervised
 4. Regression versus classification
 5. Instance-based versus model-based learning
-6. Challenges
-7. Testing and validating
+7. Trainind and testing set
+8. Quizz!
 8. Linear regression
 9. Classification
+6. Challenges
 
-## Scope and objective
+## Objective
 
-We only have 2 lectures to cover this vast topic.
-
-The aim is to understand what is machine learning and experiment with a few examples. 
-
-Try to envisage how machine learning can help you as a scientist.
+The aim is to understand what machine learning is and experiment with a few examples. 
 
 
 ## Definition of machine learning
@@ -41,11 +38,11 @@ Machine learning is the field of study that gives computer the ability to learn 
 
 -- Arthur Samuel, 1959
 
-A computer program is daid to learn from experience E with respect to some task T and some performance measure P, if its performance on T, as measured by P, improves with experience E. 
+A computer program is said to learn from experience E with respect to some task T and some performance measure P, if its performance on T, as measured by P, improves with experience E. 
 
 -- Tom Mitchell, 1997
 
-Examples : A spam filter learns to classify emails (spam versus legitimate) based on training set. The spam filter learns which words predict which emails are spam. 
+Examples : A program learns to decide whether an email is spam or not based on training set. 
 
 ## Definition of machine learning
 
@@ -61,13 +58,6 @@ $Y = f(X) + \epsilon$
 
 <br>
 Machine learning refers to a set of approaches for estimating $f$.
-
-## Training and test sets
-
-A **training set** is our observed data points that is used to estimate $f$. Our training set has $n$ observations.
-
-A **test set** is used to test how accurate our model is. Not used for trainint!
-
 
 
 ## Prediction versus inference
@@ -88,20 +78,255 @@ $\hat Y = \hat f(X)$
 * Is the relation between $Y$ and each predictor adequately summarized using a linear equation?
 
 
-## Supervised versus unsupervised
+## Supervised versus unsupervised versus reinforcement learning
 
 ### Supervised
 * The training set contains labelled data.
 * For each observation of the predictors $X_{i}, i = 1,...,n$ there is a known response measurement $y_{i}$.
-* Examples: linear regression, logistic regression, support vector machines, etc.
+* Example: linear regression
 
 ### Unsupervised
-* The training set is not labelled.
-* For each observation $i = 1,...,n$, we observed a vector of measurments $X_{i}, but no response $y_{i}.
-* Example: cluster analysis. Do the observations fall into groups?
-
-
+* Uncovering hidden patterns from unlabelled data.
+* For each observation $i = 1,...,n$, we observed a vector of measurments $X_{i}$, but no response $y_{i}$.
+* Example: cluster analysis
 
 ## Regression versus classification
 
+* If $Y$ is a continuous variable, then it is a regression task.
+* If $Y$ is a categorical variable, then it is a classification task.
 
+## Training and test sets
+
+A **training set** is our observed data points that is used to estimate $f$. Our training set has $n$ observations.
+
+A **test set** is used to test how accurate our model is. Not used for training!
+
+## Time for a quizz!
+
+[Link](https://docs.google.com/forms/d/e/1FAIpQLSfntZwHpHmieJFatBJrEd7wFLj3oS1-84WDZNXhdC45lQ6QAw/viewform?usp=sf_link)
+
+or
+
+https://tinyurl.com/s6gxeuo
+
+## Our task
+
+The mice performing rewarded alternation on the t-maze appeared to have improved their performance across the training blocks. Can we estimate how much they improved between each block?
+
+```{r load}
+myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv" 
+df<-read_csv(myFile)
+df<-mutate(df, correct = sample != choice)
+
+df1 <- df %>% 
+  group_by(mouse,block) %>% 
+  summarise(performance = 100 * mean(correct))
+```
+
+## Our data
+
+```{r ourData,fig.width = 5, fig.height = 3}
+df1 %>% 
+  ggplot(mapping = aes(x=block,y=performance)) +
+  geom_point(position="jitter")
+```
+
+What analysis could we do to estimate the rate of improvment in performance?
+
+## Linear regression
+
+* A line as a model for our data.
+* $Y = aX + b$
+* $Y$: target
+* $X$: features (inputs)
+* $a$ and $b$ are parameters of the model.
+* $a$ is the slope and $b$ is the intercept.
+* The task is to find the best $a$ and $b$.
+* Define an error or loss function to assess any possible line ($a$ and $b$).
+* Find the line ($a$ and $b$) that minimize the error function.
+
+## Linear regression
+
+* In real life, use the function `lm()` to find the regression line (best fit). 
+
+* But not today. 
+
+* To better understand how machine learning works, we will do it step-by-step.
+
+## Example of a line
+
+```{r line, fig.width = 3,fig.height = 3}
+a=2 # slope
+b=5 # intercept
+X=seq(from = 0, to = 35, by = 1) # some input values in X
+df<-data.frame(X = X, Y = X * a + b) # our line formula
+df %>% ggplot(mapping=aes(x=X,y=Y)) +
+  geom_line() +
+  xlim(0,80) +
+  ylim(0,80) 
+  
+```
+
+## Which line is the best fit for our data?
+
+```{r lines, fig.width = 3, fig.height = 2}
+set.seed(30)
+models<-tibble( # create a data frame with 1000 random lines
+  a = runif(n = 1000, min = -2, max = 5), # slope
+  b = runif(n = 1000, min = 40, max = 70) # intercept
+)
+ggplot()+
+  geom_point(mapping=aes(x=block,y=performance),position="jitter", data=df1)+
+  geom_abline(mapping=aes(intercept=b, slope=a), alpha=0.1, data=models)+
+  xlim(0,14)+
+  ylim(20,105)
+```
+
+Many of our models are pretty bad!
+
+## Cost (loss) function
+
+* Based on residuals.
+* Residuals: difference between the observed value and the predicted value (line).
+* Often used: Sum of the squares of residuals
+* Find the line which minimise the loss function
+
+```{r lm,echo=FALSE,fig.width = 6, fig.height = 3}
+dm<-df1
+# add a bit of noise to block so that the points are not on top of each other
+dm$block<-dm$block + runif(n = length(df1$block), min = -0.5, max = 0.5)
+# fit a linear model to the data
+fit<-lm(performance~block,data = dm)
+# get predicted values and residuals
+dm$predicted<-predict(fit)
+dm$residuals<-residuals(fit)
+# plot 
+ggplot(data=dm, mapping = aes(x=block,y=performance))+
+  geom_segment(aes(xend = block, yend = predicted),alpha = 0.2) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red")
+```
+
+
+## Cost function
+
+Let's write a function that will give us the predictions of a model.
+
+```{r prediction}
+# define a function
+one_model_predictions<-function(a, b, data){ 
+  # parameters are a and b
+  # data should be our input X
+  a * data$block  + b # y = a * x + b
+}
+
+# prediction of the model y = 5 * x + 50
+one_model_predictions(a=5, b=50, data=df1)
+```
+
+## Cost function
+
+Calculate the difference between the actual and predicted y values. Return residual sum of squares (RSS).
+
+```{r difference}
+measure_distance <- function(a, b, data){
+  diff <- data$performance - one_model_predictions(a, b,data)
+  sum(diff^2)
+}
+
+dist <- measure_distance(a=5, b=50, data=df1)
+print(paste("Residual sum of squares: ",dist))
+```
+
+## Best fitting lines
+
+Measure the distance between the prediction of all models and the observed performance
+
+```{r distance_all}
+models <- models %>%
+  mutate(dist = purrr::map2_dbl(a,b,measure_distance,df1))
+# purrr::map2_dbl() calls measure_distance for each row of models
+head(models,n=5)
+```
+
+## Best fitting lines
+
+Which model is the best fit?
+
+```{r best_fit}
+models %>% 
+  filter(rank(dist)<=8) %>% 
+  arrange(dist)
+```
+
+## Best fitting line
+
+```{r best_fit2, fig.width = 3, fig.height = 2}
+ggplot() +
+  geom_point(mapping=aes(x=block,y=performance),position="jitter", 
+             data=df1) +
+  geom_abline(mapping=aes(intercept=b, slope=a), alpha=0.1, 
+              data=filter(models,rank(dist)<=8)) +
+  xlim(0,14) +
+  ylim(20,105)
+```
+
+This is way better!
+
+## Our parameter search
+
+Our machine learning algorithm found the best fits.
+
+```{r best_fit3, fig.width = 3, fig.height = 2}
+ggplot(data=models, mapping = aes(x=a,y=b)) +
+  geom_point(aes(color=-dist),alpha=0.2) +
+  geom_point(data=filter(models,rank(dist)<=10),color="red") +
+  geom_point(data=filter(models,rank(dist)<=1),color="blue") 
+```
+
+## Compare our results to lm()
+
+```{r best_fit4}
+models %>% 
+  filter(rank(dist)==1)
+myFittedModel<-lm(performance~block, data=df1)
+myFittedModel
+```
+
+## lm()
+
+```{r summary}
+summary(myFittedModel)
+```
+
+
+## Compare our results to lm()
+
+```{r compare,fig.width = 3, fig.height = 3}
+ggplot(data=df1,mapping=aes(x=block,y=performance)) +
+  geom_point(position="jitter") +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  geom_abline(mapping = aes(slope=a,intercept = b),data=filter(models,rank(dist)==1))
+```
+
+Impressively close! Would be closer with a better samples of lines.
+
+## For more on machine learning
+
+### Online courses
+
+* [Datacamp](https://www.datacamp.com/)
+
+### Good books
+
+* [An Introduction to Statistical Learning: With Applications in R](https://www.academia.edu/36691506/An_Introduction_to_Statistical_Learning_Springer_Texts_in_Statistics_An_Introduction_to_Statistical_Learning) 
+
+* [Hands-On Machine Learning with Scikit-Learn and TensorFlow](https://www.amazon.de/Hands-Machine-Learning-Scikit-Learn-TensorFlow/dp/1491962291)
+
+## For next week
+
+* Read a book chapter: [The Machine Learning Landscape](https://www.oreilly.com/library/view/hands-on-machine-learning/9781491962282/ch01.html) (Hands-on machine learning chapter  1)
+
+* Read a Nature Neuroscinece paper: [Deeplabcut](http://orga.cvss.cc/wp-content/uploads/2019/05/Mathis-etal-2018-NatureNeuroscience.pdf)
+
+* Have a look at the [DeepLabCut repository](https://github.com/AlexEMG/DeepLabCut)
