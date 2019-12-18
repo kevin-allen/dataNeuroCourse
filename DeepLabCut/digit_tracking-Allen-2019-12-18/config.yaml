@@ -1,0 +1,66 @@
+# Project definitions (do not edit)
+Task: digit_tracking
+scorer: Allen
+date: Dec18
+
+# Project path (change when moving around)
+project_path: /content/drive/My Drive/teaching_and_thesis/master_neuroscience_2019/deeplabcut/digit_tracking-Allen-2019-12-18
+
+# Annotation data set configuration (and individual video cropping parameters)
+video_sets:
+  /home/kevin/repo/dataNeuroCourse/DeepLabCut/digit_tracking-Allen-2019-12-18/videos/digits.avi:
+    crop: 0, 640, 0, 480
+bodyparts:
+- distal1
+- distal2
+- distal3
+- distal4
+- proxInterphal1
+- proxInterphal2
+- proxInterphal3
+- proxInterphal4
+- metacarpophal1
+- metacarpophal2
+- metacarpophal3
+- metacarpophal4
+
+start: 0
+stop: 1
+numframes2pick: 30
+
+# Plotting configuration
+skeleton:
+- distal1
+- distal2
+- distal3
+- distal4
+
+skeleton_color: black
+pcutoff: 0.1
+dotsize: 12
+alphavalue: 0.7
+colormap: jet
+
+# Training,Evaluation and Analysis configuration
+TrainingFraction:
+- 0.95
+iteration: 0
+resnet:
+snapshotindex: -1
+batch_size: 8
+
+# Cropping Parameters (for analysis and outlier frame detection)
+cropping: false
+#if cropping is true for analysis, then set the values here:
+x1: 0
+x2: 640
+y1: 277
+y2: 624
+
+# Refinement configuration (parameters from annotation dataset configuration also relevant in this stage)
+corner2move2:
+- 50
+- 50
+move2corner: true
+default_net_type: resnet_50
+default_augmenter: default
