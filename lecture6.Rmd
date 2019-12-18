@@ -1,0 +1,141 @@
+---
+title: "Data science and analysis in Neuroscience"
+author: "Kevin Allen"
+date: "December 19, 2019"
+output:
+  ioslides_presentation: default
+  beamer_presentation: default
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+```
+
+## Machine learning and DeepLabCut
+
+1. Brief review of last lecture
+2. Introduction of DeepLabCut
+3. Overview of the paper
+4. Example of how to use DeepLabCut
+5. Challenges
+6. Questionaire
+
+## Review
+
+Machine learning is the field of study that gives computer the ability to learn without being explicitely programmed.
+
+-- Arthur Samuel, 1959
+
+Examples : A program learns to decide whether an email is spam or not based on training set. 
+
+## Definition of machine learning
+
+* Prediction versus inference
+* Supervised versus unsupervised
+* Regression versus classification
+
+## Linear regression
+
+```{r load,include=FALSE}
+{
+myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv" 
+df<-read_csv(myFile)
+df<-mutate(df, correct = sample != choice)
+
+df1 <- df %>% 
+  group_by(mouse,block) %>% 
+  summarise(performance = 100 * mean(correct))
+}
+```
+
+* One of the simplest model to explain your data.
+* $Y = aX + b$
+* $Y$: target
+* $X$: features (inputs)
+* $a$ and $b$ are parameters of the model.
+* $a$ is the slope and $b$ is the intercept.
+* The task is to find the best $a$ and $b$.
+* Define an error or loss function to assess any possible line ($a$ and $b$).
+* Find the line that minimize the error function.
+
+## Measuring the fit of different models
+
+```{r lm,echo=FALSE,fig.width = 6, fig.height = 3}
+dm<-df1
+# add a bit of noise to block so that the points are not on top of each other
+dm$block<-dm$block + runif(n = length(df1$block), min = -0.5, max = 0.5)
+# fit a linear model to the data
+fit<-lm(performance~block,data = dm)
+# get predicted values and residuals
+dm$predicted<-predict(fit)
+dm$residuals<-residuals(fit)
+# plot 
+ggplot(data=dm, mapping = aes(x=block,y=performance))+
+  geom_segment(aes(xend = block, yend = predicted),alpha = 0.2) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red")
+```
+
+***
+
+```{r best_fit4}
+lm(performance~block, data=df1)
+```
+
+## Display the results of lm()
+
+```{r compare,fig.width = 3, fig.height = 3}
+ggplot(data=df1,mapping=aes(x=block,y=performance)) +
+  geom_point(position="jitter") +
+  geom_smooth(method = "lm", se = FALSE, color = "red")
+```
+
+## DeepLabCut
+
+* Method for 3D markerless pose estimation
+* Quantify behavior
+* Uses deep neural networks
+* Matches human accuracy, but is much faster
+* Used more and more in behavioral experiments
+
+Previous alternative: video recordings with easily recognizable reflective markers on the animal.
+
+
+## Deep neural network
+
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/deep-neural-network.png")
+```
+
+
+## History
+
+* Deep convolutional neural networks became able to detect objects and classify images (ImageNet).
+
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/imageNetResults.png")
+```
+
+Shawahna, Sait, El-Maleh (2018) IEEEAccess
+
+
+
+## DeepLabCut: the workflow
+
+
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/dlcOverview.png")
+```
+
+
+## DeepLabCut: the workflow
+
+
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/MathisFigure1.png")
+```
+
+## We now move to a jupyter notebook and python
