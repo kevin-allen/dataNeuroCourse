@@ -114,7 +114,6 @@ https://tinyurl.com/s6gxeuo
 The mice performing rewarded alternation on the t-maze appeared to have improved their performance across the training blocks. Can we estimate how much they improved between each block?
 
 ```{r load}
-{
 myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv" 
 df<-read_csv(myFile)
 df<-mutate(df, correct = sample != choice)
@@ -122,7 +121,6 @@ df<-mutate(df, correct = sample != choice)
 df1 <- df %>% 
   group_by(mouse,block) %>% 
   summarise(performance = 100 * mean(correct))
-}
 ```
 
 ## Our data
@@ -137,7 +135,7 @@ What analysis could we do to estimate the rate of improvment in performance?
 
 ## Linear regression
 
-* One of the simplest model to explain your data.
+* A line as a model for our data.
 * $Y = aX + b$
 * $Y$: target
 * $X$: features (inputs)
@@ -145,14 +143,15 @@ What analysis could we do to estimate the rate of improvment in performance?
 * $a$ is the slope and $b$ is the intercept.
 * The task is to find the best $a$ and $b$.
 * Define an error or loss function to assess any possible line ($a$ and $b$).
-* Find the line that minimize the error function.
+* Find the line ($a$ and $b$) that minimize the error function.
 
 ## Linear regression
 
-* Normally, you use the function `lm()` to find the best fitting (regression) line. 
+* In real life, use the function `lm()` to find the regression line (best fit). 
 
-* But to understand how machine learning works, we will do it step-by-step.
+* But not today. 
 
+* To better understand how machine learning works, we will do it step-by-step.
 
 ## Example of a line
 
@@ -227,16 +226,16 @@ one_model_predictions(a=5, b=50, data=df1)
 
 ## Cost function
 
-Calculate the difference between the actual and predicted y values. Return root mean square of the difference.
+Calculate the difference between the actual and predicted y values. Return residual sum of squares (RSS).
 
 ```{r difference}
 measure_distance <- function(a, b, data){
   diff <- data$performance - one_model_predictions(a, b,data)
-  sqrt(mean(diff^2))
+  sum(diff^2)
 }
 
 dist <- measure_distance(a=5, b=50, data=df1)
-print(paste("Root mean square of residuals: ",dist))
+print(paste("Residual sum of squares: ",dist))
 ```
 
 ## Best fitting lines
@@ -290,8 +289,16 @@ ggplot(data=models, mapping = aes(x=a,y=b)) +
 ```{r best_fit4}
 models %>% 
   filter(rank(dist)==1)
-lm(performance~block, data=df1)
+myFittedModel<-lm(performance~block, data=df1)
+myFittedModel
 ```
+
+## lm()
+
+```{r summary}
+summary(myFittedModel)
+```
+
 
 ## Compare our results to lm()
 
@@ -302,8 +309,7 @@ ggplot(data=df1,mapping=aes(x=block,y=performance)) +
   geom_abline(mapping = aes(slope=a,intercept = b),data=filter(models,rank(dist)==1))
 ```
 
-Impressively close!
-
+Impressively close! Would be closer with a better samples of lines.
 
 ## For more on machine learning
 
