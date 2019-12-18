@@ -18,10 +18,7 @@ library(knitr)
 
 1. Brief review of last lecture
 2. Introduction of DeepLabCut
-3. Overview of the paper
-4. Example of how to use DeepLabCut
-5. Challenges
-6. Questionaire
+3. Example of how to use DeepLabCut
 
 ## Review
 
@@ -55,11 +52,9 @@ df1 <- df %>%
 * $Y = aX + b$
 * $Y$: target
 * $X$: features (inputs)
-* $a$ and $b$ are parameters of the model.
 * $a$ is the slope and $b$ is the intercept.
-* The task is to find the best $a$ and $b$.
-* Define an error or loss function to assess any possible line ($a$ and $b$).
-* Find the line that minimize the error function.
+* Find the parameters $a$ and $b$ that minimize a cost function.
+
 
 ## Measuring the fit of different models
 
@@ -92,6 +87,10 @@ ggplot(data=df1,mapping=aes(x=block,y=performance)) +
   geom_point(position="jitter") +
   geom_smooth(method = "lm", se = FALSE, color = "red")
 ```
+
+## DeepLabCut
+
+[https://www.mousemotorlab.org/deeplabcut/](https://www.mousemotorlab.org/deeplabcut/)
 
 ## DeepLabCut
 
@@ -136,6 +135,13 @@ knitr::include_graphics("images/dlcOverview.png")
 
 ```{r, echo=FALSE,out.width = "800px"}
 knitr::include_graphics("images/MathisFigure1.png")
+```
+
+
+## DeepLabCut: performance
+
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/MathisFigure2.png")
 ```
 
 ## We now move to a jupyter notebook and python
