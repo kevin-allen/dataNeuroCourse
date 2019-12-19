@@ -94,14 +94,14 @@ ggplot(data=df1,mapping=aes(x=block,y=performance)) +
 
 ## DeepLabCut
 
-* Method for 3D markerless pose estimation
-* Quantify behavior
+* A method for 3D markerless pose estimation
+* Quantifies behavior
 * Uses deep neural networks
 * Matches human accuracy, but is much faster
 * Used more and more in behavioral experiments
 * Open-source technologies (python, tensorflow, etc)
 
-* You need a graphics card (graphics processing unit, GPU).
+* Relatively easy to use, but you need access to a graphics card (graphics processing unit, GPU).
 
 Previous alternative: video recordings with easily recognizable reflective markers on the animal.
 
