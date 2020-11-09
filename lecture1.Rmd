@@ -1,11 +1,12 @@
 ---
 title: "Data science and analysis in Neuroscience"
 author: "Kevin Allen"
-date: "November 7, 2019"
+date: "November 12, 2020"
 output:
   ioslides_presentation: default
   slidy_presentation: default
   beamer_presentation: default
+  
 ---
 
 ```{r setup, include=FALSE}
@@ -32,7 +33,6 @@ Turn raw data into understanding, insight and knowledge.
 ```{r, echo=FALSE,out.width = "800px"}
 knitr::include_graphics("images/data-science.png")
 ```
-
 
 ## Course objectives
 
@@ -98,9 +98,9 @@ git pull
 ## Lecture format
 
 1. Short introduction of topics
-2. Exercises in small groups
+2. Exercises
 3. Review of exercises
-4. Homeworks: readings or some exercises
+4. Homeworks: readings and some exercises
 5. Review quizzes
 
 It is your course, interrupt me as often as you like.
@@ -110,34 +110,39 @@ It is your course, interrupt me as often as you like.
 
 A short survey of the classroom.
 
-https://tinyurl.com/y2rtpf2h
+https://tinyurl.com/y5m46ghz
 
 
 ## Data science landscape
 ### Matlab
 
 Stable environment, singal processing, matrix operations
-
-Weakness: Proprietary programming language -> Implications in science
+**Weakness**: Proprietary programming language ($)
 
 ### Python
-Open-source language, general-purpose, popularity rising, TensorFlow for machine learning
+
+Open-source language, very popular, good for signal processing or processing images. 
+
+Excellent for machine learning and deep learning
 
 ### R
-Open-source language, statistical analysis, visualization, R packages, RStudio
+
+Open-source language, traditional statistical analysis, visualization, R packages, RStudio
+
+A good entry point to data analysis
 
 
 ## Data science landscape
 
-Recommendation: Use open-source languages (`R` and `python`).
+Recommendations: Use open-source languages (`R` and `python`).
 
 Both `R` and `python` are great tools for data analysis.
 
 In the end, the most crucial point is to get the job done.
 
-We will use mainly `R`. 
+We will mainly use `R`. 
 
-We will use `python` for our `deeplabcut` project.
+Some simple `python` will be used at the very end (`deeplabcut` project).
 
 ## RStudio
 ```{r, echo=FALSE,out.width = "650px"}
@@ -264,6 +269,7 @@ mySum <- function(iOne=1, iTwo = 3){
 mySum()
 ```
 
+TRICK: Use tab to complete the name of a function in RStudio.
 
 
 ## Object types
@@ -277,7 +283,6 @@ y <- "neuroscience"
 class(y)
 ```
 
-TRICK: Use tab to complete the name of a function in RStudio.
 
 ## Data frames
 
@@ -305,9 +310,15 @@ df
 3. A `column` often contains a variable (e.g., height). 
 4. A `cell` contains a single value.
 
+## Data frames
+
+In this course, we will be working mainly with data frames.
+
 TRICK: Organize your data frame with one entry per row whenever possible. 
 
 ## Subsetting data frames
+
+This is the traditional `R` way.
 
 ```{r dataFrame3}
 # one variable
@@ -374,18 +385,16 @@ mean(mpg$cty[1:10])
 mean(mpg$cty[mpg$year==2008])
 ```
 
-## Next week
-I am in Magdeburg for a collaborative grant application.
-
-Solution
-
-We have slightly longer sessions on the 21st, 28th of November 5th of December. 
 
 
 ## To do before the next lecture
 
 1. Install [git](https://git-scm.com/) on your computer.
 2. Reading: R for Data Science, Chapters 1 and 2.
+
+
+
+
 
 
 ## Next lecture
