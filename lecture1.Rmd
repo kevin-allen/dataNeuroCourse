@@ -3,10 +3,10 @@ title: "Data science and analysis in Neuroscience"
 author: "Kevin Allen"
 date: "November 12, 2020"
 output:
+  
   ioslides_presentation: default
   slidy_presentation: default
   beamer_presentation: default
-  
 ---
 
 ```{r setup, include=FALSE}
@@ -46,19 +46,15 @@ knitr::include_graphics("images/data-science.png")
 
 ## Supporting materials
 
-1. [R for Data Science](https://r4ds.had.co.nz/)
+[R for Data Science](https://r4ds.had.co.nz/)
 
 ```{r, echo=FALSE, out.width = "100px"}
 knitr::include_graphics("images/rds_cover.png")
 ```
+Available online.
 
-2. [An Introduction to Statistical Learning: With Applications in R](https://www.academia.edu/36691506/An_Introduction_to_Statistical_Learning_Springer_Texts_in_Statistics_An_Introduction_to_Statistical_Learning). 
 
-```{r, echo=FALSE, out.width="100px"}
-knitr::include_graphics("images/isl_cover.jpeg")
-```
-
-Both books are available online.
+[Datacamp web site](www.datacamp.com)
 
 ## Conventions in the slides
 
@@ -297,7 +293,7 @@ df<-data.frame(firstName=c("Sonia","Bruno","Paul"),
 df
 ```
 
-Trick: Use `view(df)` to get a more excel-like look.
+Trick: Use `View(df)` to get a more excel-like look.
 
 ## Data frames
 
@@ -385,21 +381,16 @@ mean(mpg$cty[1:10])
 mean(mpg$cty[mpg$year==2008])
 ```
 
-
-
 ## To do before the next lecture
 
 1. Install [git](https://git-scm.com/) on your computer.
 2. Reading: R for Data Science, Chapters 1 and 2.
-
-
-
-
+3. Datacamp: Introduction to R https://learn.datacamp.com/courses/free-introduction-to-r
 
 
 ## Next lecture
 
-1. Review exercises (15 minutes)
+1. Review of last week (15 minutes)
 2. RStudio editor and .R files. (10 minutes)
 3. git repositories (15 minutes)
 4. Introduction to ggplot2 (30 minutes)
