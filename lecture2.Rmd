@@ -36,7 +36,7 @@ library(knitr)
 
 ## RStudio editor
 
-A place to store the code you care about.
+A place write code that you may want to keep.
 
 Save code into a .R file for later use or sharing.
 
@@ -50,13 +50,21 @@ knitr::include_graphics("images/rstudio-editor.png")
 2. Execute a single expression: Cmd/Ctrl-Enter
 3. Execute the entire script: Cmd/Ctrl-Shift-S
 
-## RStudio editor
+## Today's exercises 
 
-Create an R script. 
-Write this code in the RStudio editor, run the code, and save it as `myFirstPlot.R`.
+You can provide some feedback here https://forms.gle/WRWTFFPQPRTcFvyL8
+
+or in the chat
+
+## Exercise 1
+
+Create an R script.
+
+Write the code below in the RStudio editor, run the code, and save it as `myFirstProgram.R`.
 
 ```{r editor,eval=FALSE}
 library(tidyverse)
+# a comment
 ggplot(data=mpg) +
   geom_point(mapping=aes(x=displ,y=hwy))
 ```
@@ -65,7 +73,7 @@ ggplot(data=mpg) +
 
 See history tab (top-right)
 
-## git repositories
+## git
 
 1. Version control system to track changes in files in a directory
 2. Works with any programming languages.
@@ -78,9 +86,10 @@ See history tab (top-right)
 
 Why should I even bother?
 
-1. Prevent catastrophes (a real example)
-2. Force you to keep your code in order
-3. Easy way to share your code along with publications.
+1. Prevents catastrophes (a real example)
+2. Forces you to keep your code organizedr
+3. Facilitates sharing your code
+4. Centralizes your code is in one virtual place (e.g., GitHub)
 
 I recommend creating a repository for any projects that involve programming.
 
@@ -93,6 +102,10 @@ https://github.com/kevin-allen/dataNeuroCourse
 Live example.
 
 We will come back to git repositories when you have more code!
+
+## git limitations
+
+Does not work very well with files that are not text files.
 
 
 ## An introduction to ggplot2
@@ -144,7 +157,7 @@ ggplot(data = mpg) +
 
 Shape and color work better with categorical variables.
 
-## Exercise with ggplot2
+## Exercise 2 (ggplot2)
 
 1. What plot could you produce to investigate whether cars are more efficient on the highway or in a city?
 2. How could you add information about the displacement of the motor in your graph? 
@@ -220,7 +233,7 @@ ggplot(data = mpg) +
   geom_histogram(mapping = aes(x=displ),binwidth = 0.1)
 ```
 
-## Exercise 
+## Exercise 3 (Create a boxplot)
 
 1. Produce a boxplot showing the highway consumption for the different classes of cars.
 
@@ -249,7 +262,7 @@ knitr::include_graphics("images/tmaze.jpg")
 Download the data set: https://tinyurl.com/r52pxm5
 or here: https://github.com/kevin-allen/dataNeuroCourse/tree/master/dataSets
 
-## Load the data set in R
+## Exercise 4 (Load the data set in R)
 
 ```{r load}
 # path to your downloaded file
@@ -416,7 +429,8 @@ df %>%
 
 
 
-## Putting it all together (dplyr and ggplot)
+## Exercise 5 (dplyr and ggplot)
+
 
 * Create a data frame in which you have the performance of single mice on single blocks. Use the Pipe! 
 
@@ -428,7 +442,7 @@ df %>%
   summarise(performance = mean(correct))
 ```
 
-## Putting it all together (dplyr and ggplot)
+## Exercise 6 (dplyr and ggplot)
 
 * Plot a histogram showing the distribution of performance on every block and mouse (mouse1-block1, mouse1-block2, mouseN-blockN). 
 
@@ -442,7 +456,7 @@ ggplot (data=new_df) +
   geom_histogram(mapping = aes(x = performance),binwidth=0.01)
 ```
 
-## Put it all together (dplyr and ggplot)
+## Exercise 7 (dplyr and ggplot)
 
 * The first 3 days of training (e.g, blocks) had 20 trials instead of 10. Plot the distribution of performance on every block and mouse, but only for blocks with 10 trials.
 
@@ -457,7 +471,7 @@ ggplot (data=new_df) +
   geom_histogram(mapping = aes(x = performance),binwidth=0.01)
 ```
 
-## Put it all together (dplyr and ggplot)
+## Exercise 8 (dplyr and ggplot)
 
 * Make a plot showing the mean performance of all mice on each block. Use geom_line or geom_point.
 
@@ -472,9 +486,7 @@ df %>% group_by(mouse,block) %>%
   geom_line(mapping=aes(x=block,y=global_performance))
 ```
 
-
-
-## Put it all together (dplyr and ggplot)
+## Exercise 9 (dplyr and ggplot)
 
 * Remember the facet_wrap function in ggplot? It can be used to plot several graphs into the same plot 
 
@@ -492,7 +504,6 @@ df %>% group_by(mouse,block) %>%
 ```
 
 
-
 ## Next lecture
 
 1. More exercises on dplyr and ggplot with a different data frame
@@ -505,5 +516,7 @@ df %>% group_by(mouse,block) %>%
 ## For the next lecture
 
 1. Review ggplot and dplyr exercises.
-1. Install git on your computer and clone the course repository (https://github.com/kevin-allen/dataNeuroCourse)
-2. Read chapters 1, 2 and 3  of R for Data Science
+2. Clone the course repository (https://github.com/kevin-allen/dataNeuroCourse)
+3. Read chapters 1 to 4  of R for Data Science
+4. [Datacamp introduction to data visualization with ggplot2](https://learn.datacamp.com/courses/introduction-to-data-visualization-with-ggplot2)
+5. [Datacamp introduction to tidyverse](https://learn.datacamp.com/courses/introduction-to-the-tidyverse)

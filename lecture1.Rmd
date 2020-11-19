@@ -361,7 +361,7 @@ To load the package in your R session
 library("package_name")
 ```
 
-## Exercise
+## Exercises
 
 We will use the mpg data set that comes with tidyverse, so load tidyverse.
 You can get information with `?mpg`.
