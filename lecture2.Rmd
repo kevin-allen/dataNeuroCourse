@@ -92,7 +92,7 @@ See history tab (top-right)
 Why should I even bother?
 
 1. Prevents catastrophes (a real example)
-2. Forces you to keep your code organizedr
+2. Forces you to keep your code organized
 3. Facilitates sharing your code
 4. Centralizes your code is in one virtual place (e.g., GitHub)
 
