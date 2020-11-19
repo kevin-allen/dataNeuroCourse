@@ -288,7 +288,7 @@ df<-read_csv(myFile)
 
 ```{r load2}
 print(df)
-view(df)
+View(df)
 ```
 
 ## tidyverse
