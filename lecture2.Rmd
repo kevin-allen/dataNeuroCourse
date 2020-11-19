@@ -33,6 +33,11 @@ library(knitr)
 4. What is a data frame?
 5. How do I get information regarding the use of a built-in function (e.g., `mean`)?
 
+## Should I use `=` or `<-` for assignment?
+
+The difference is very subtle (operator precedence, etc.).
+
+Google and Hadley Wickham (R guru) both say you should use `<-`.
 
 ## RStudio editor
 
@@ -101,11 +106,19 @@ https://github.com/kevin-allen/dataNeuroCourse
 
 Live example.
 
-We will come back to git repositories when you have more code!
+
+## git integration in RStudio
+
+You can use git from within RStudio if you create a Project.
+
+https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN
+
 
 ## git limitations
 
-Does not work very well with files that are not text files.
+git does not work that well with files that are not text files.
+
+We will come back to git repositories when you have more code!
 
 
 ## An introduction to ggplot2
