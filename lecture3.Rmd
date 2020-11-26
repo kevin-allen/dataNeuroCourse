@@ -19,10 +19,9 @@ library(knitr)
 
 1. Review of last week
 2. Use dplyr and ggplot to do exploratory data analysis
-3. Saving a graph
-4. Plot with several graphs
-
-Today will be a very hands-on session.
+3. Save a plot as a pdf file
+4. Create figures with several plots
+5. Create your own git repository on GitHub
 
 ## Today's objective
 
@@ -37,21 +36,13 @@ ggplot(data=mpg) +
   geom_point(mapping = aes(x = displ, y = hwy))
 ```
 
-## Count and distribution
-
-Continuous variable
-```{r count1,out.width=500}
-ggplot(data = mpg) +
-  geom_histogram(mapping = aes(x=displ),binwidth = 0.1)
-```
-
 
 ## Review: dplyr
 
 1. Pick observations (rows) by their values: `filter()`
 2. Reorder the rows: `arrange()`
 3. Pick variable (columns) by names: `select()`
-4. Create new variables from existing variable: `mutate()`
+4. Create n ew variables from existing variable: `mutate()`
 5. Collapse many values down to a single summary: `summarize()`
 
 ## Review: load data from a file
@@ -123,6 +114,8 @@ It is now time to use our new skills to explore our t-maze data set further.
 We will do a series of exercises.
 
 Save your code in a R document with the editor.
+
+Some of it was presented as exercises last week.
 
 ## Exploratory data analysis
 
@@ -386,5 +379,79 @@ dev.off() # close the file
 ```
 
 I usually add the final touch to the graphs using [Inkscape](https://inkscape.org/).
+
+
+## git: install 
+
+Make sure you save any R script open in RStudio. 
+
+Install git on your computer
+
+* Windows and Mac: (http://git-scm.com/downloads)
+* linux: `sudo apt-get install git-core`
+
+Example for Windows : Download for Windows, Run executable, license next,  default location, will install git bash. Use Git and optional Unix tools from the Windows Command Prompt, 3 x next with default
+
+## Set up RStudio
+
+1. Go to Global Options (from the Tools menu)
+2. Click Git/SVN
+3. Click Enable version control interface for RStudio projects
+
+For more [information](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN)
+
+## Create a repository on GitHub.
+
+1. Create an account at [GitHub](https://github.com/) and verify your email
+2. Log in
+3. Click New repository
+4. Set repository name: myNotesDataScience, set to private, check Initialize this repository with a README
+5. Click Create repository
+
+## Create a project with RStudio from your repository
+
+1. Copy the urs of your repository from the github web site. It ends with `.git`
+2. Open RStudio, New Project..., Version Control, Git, 
+3. Enter the url and set directory.
+4. Create project.
+
+## Your first commit and push
+1. Click on commit.
+2. Make sure `myNotesDataScience.Rproj` is staged.
+3. Set commit message to `my first commit`
+4. Click commit
+5. Click on the up arrow to push your commit to the online repository.
+6. Refresh your web browser to see `myNotesDataScience.Rproj` online.
+
+<!-- ## Set up git for your new repository 
+  1. Launch git bash.
+2. type `cd` and `enter`
+3. type `mkdir repo` to create a directory called `repo` in your home directory.
+4. `cd repo`
+5. `git config --global user.name "Your name"`
+6. `git config --global user.email "youremail@hello.com"`
+-->
+## Next steps with git...
+
+All you will have to do most of the time.
+
+1. Save the file with your R code in your project directory.
+2. Stage the file
+3. Commit
+4. Push
+
+## To do
+
+1. Create your own repository on github containing your code from today.
+2. Pull the course repository a few hours before next lecture.
+
+## Next week
+
+1. Combining information from several data frames
+2. Common statistical procedures with R
+  + Correlation 
+  + t-test
+  + ANOVA
+  + Common assumptions and common errors
 
   

@@ -4,8 +4,6 @@ author: "Kevin Allen"
 date: "December 3, 2019"
 output:
   ioslides_presentation: default
-  beamer_presentation: default
-  slidy_presentation: default
 ---
 
 ```{r setup, include=FALSE}
@@ -16,11 +14,15 @@ library(knitr)
 
 ## Today's plan
 
-1. Consolidation of dplyr and ggplot
-2. git: create your git repository on github
-3. Relational data with dplyr
+1. Combining information from several data frames
+2. Common statistical procedures with R
+  + Correlation 
+  + t-test
+  + ANOVA
+  + Common assumptions and common errors
 
-## dplyr and ggplot
+
+## Combining information from several data frames
 
 Load the tmaze data set for a few more exercises.
 
@@ -30,72 +32,17 @@ df<-read_csv(myFile)
 df<-mutate(df, correct = sample != choice)
 ```
 
-## git: install 
 
-Make sure you save any R script open in RStudio. 
-
-Install git on your computer
-
-* Windows and Mac: (http://git-scm.com/downloads)
-* linux: `sudo apt-get install git-core`
-
-Example for Windows : Download for Windows, Run executable, license next,  default location, will install git bash. Use Git and optional Unix tools from the Windows Command Prompt, 3 x next with default
-
-## Set up RStudio
-
-1. Go to Global Options (from the Tools menu)
-2. Click Git/SVN
-3. Click Enable version control interface for RStudio projects
-
-For more [information](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN)
-
-## Create a repository on GitHub.
-
-1. Create an account at [GitHub](https://github.com/) and verify your email
-2. Log in
-3. Click New repository
-4. Set repository name: myNotesDataScience, set to private, check Initialize this repository with a README
-5. Click Create repository
-
-## Create a project with RStudio from your repository
-
-1. Copy the urs of your repository from the github web site. It ends with `.git`
-2. Open RStudio, New Project..., Version Control, Git, 
-3. Enter the url and set directory.
-4. Create project.
-
-## Your first commit and push
-1. Click on commit.
-2. Make sure `myNotesDataScience.Rproj` is staged.
-3. Set commit message to `my first commit`
-4. Click commit
-5. Click on the up arrow to push your commit to the online repository.
-6. Refresh your web browser to see `myNotesDataScience.Rproj` online.
-
-<!-- ## Set up git for your new repository 
-  1. Launch git bash.
-2. type `cd` and `enter`
-3. type `mkdir repo` to create a directory called `repo` in your home directory.
-4. `cd repo`
-5. `git config --global user.name "Your name"`
-6. `git config --global user.email "youremail@hello.com"`
--->
-## Next steps with git...
-
-All you will have to do most of the time.
-
-1. Save the file with your R code in your project directory.
-2. Stage the file
-3. Commit
-4. Push
-
-## Relational data with dplyr
+## Combining information from several data frames
 
 In most project, you need to work with several tables. 
 
 Relations are defined between a pair of tables.
 
-## Relational data with dplyr
+dplyr has several functions to do this.
+
+
+## Combining information from several data frames
 
 Let's assign a genotype to each mouse in a new data frame.
 
@@ -143,17 +90,32 @@ df %>%
 * Then copies across variables from one table to the other.
 
 ```{r relational5}
-df<- df %>% 
+df_join <- df %>% 
   left_join(dfGeno,by="mouse") # match with mouse
-view(df)
+df_join
 ```
 We now have an additional variable (genotype) in df.
 
 For more information: [Relational data and dplyr](https://r4ds.had.co.nz/relational-data.html)
 
-## (End - 1)
-
-This is all for today. 
 
 Time to use `git` to `commit` and `push` your changes to your online repository.
 
+
+## Common statistics with R
+
+1. Correlation 
+2. t-test
+3. Wilcoxon tests
+3. ANOVAs
+4. Common assumptions and common errors
+
+## Warnings
+
+Always make sure that you understand the assumptions associated with each test.
+
+A p value has no real meaning if the assumptions of the test are violated.
+
+## Reading for this week
+
+[Ten common statistical mistakes (eLife, 2019)](https://elifesciences.org/articles/48175?gclid=Cj0KCQiAwf39BRCCARIsALXWETyV3Dhu7jGevlenU1oh2zzLo812jOvAeparT0UYPEY9hPOFI34ECUQaAkBEEALw_wcB)
