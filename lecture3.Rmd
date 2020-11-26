@@ -66,6 +66,7 @@ df
 summarise(df, performance = mean(correct))
 ```
 
+
 ## Review: group_by and summarise
 
 Collapse according to some groups.
@@ -215,6 +216,20 @@ df1 %>%
 ```
 
 Do you see any problems with this plot? Focus on the points...
+
+***
+
+```{r}
+df1 <- df %>% group_by(block) %>% 
+  summarise(performance = mean(correct)*100)
+df2 <- df %>% group_by(block,mouse) %>% 
+  summarise(performance = mean(correct)*100)
+ggplot(data=df1) +
+  geom_line(mapping=aes(x=block,y=performance))+
+  geom_point(data = df2, mapping=aes(x=block,y=performance)) 
+  
+```
+
 
 ***
 
