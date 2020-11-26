@@ -414,34 +414,6 @@ summarise(by_df,noTrials = n(), performance= mean(correct))
 ```
 
 
-## Using Pipe
-
-Combine multiple operations with the Pipe: ` %>% ` 
-
-` %>% ` is like "then"
-
-`do_thid %>%  do_that %>% do_something_else`
-
-
-## Using Pipe
-
-```{r pipe,eval=FALSE}
-## without Pipe
-df_mouse<- filter(df,mouse=="Mn4656")
-df_mouse_sel<- select(df_mouse,mouse,block,trialNo,correct)
-df_mouse_sel_gb<-group_by(df_mouse_sel,block)
-summarise(df_mouse_sel_gb,performance=mean(correct))
-
-## with Pipe
-df %>% 
-  filter(mouse=="Mn4656") %>% 
-  select(mouse,block,trialNo,correct) %>% 
-  group_by(block) %>% 
-  summarize(performance=mean(correct))
-```
-
-
-
 ## Exercise 5 (dplyr and ggplot)
 
 

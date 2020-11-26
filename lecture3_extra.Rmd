@@ -1,0 +1,173 @@
+---
+title: "lecture3_extra"
+author: "Kevin Allen"
+date: "November 26, 2020"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+```
+
+## Introduction
+
+Here are some extra exercises to gain more experience using R for data analysis.
+
+We will use the same T-maze data set. In this data set, every row is trial. Each trial has 2 phases: the sample and choice phases.
+To obtain a food reward on the choice phase, the mouse had to alternate between the two goal arms. For example, if the mouse entered the R goal arm during the sample phase, it then had to enter the L goal arm during the choice phase.
+
+We will try to understand why some mice performed poorly on the rewarded alternation task.
+
+## Load data from a file
+
+```{r review_load}
+myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv" 
+df<-read_csv(myFile)
+df<-mutate(df, correct = sample != choice)
+```
+
+## Exploratory data analysis
+
+One hypothesis is that some mice had a bad performance because they always visited the same goal arm instead of alternating. 
+
+How could we test this?
+
+We would first need a score per mouse telling us if the mouse always choose the same arm?
+
+
+## Break down your programming task into smaller tasks.
+
+Strategy 1
+
+* Which column contains relevant information?
+* How can we go from the values in this column to a statistic (number)?
+* Once you have the information, choose a plot?
+
+Strategy 2
+
+* Imagine which plot would convey your message best (draw some on paper)
+* Find out which steps are needed to produce this graph.
+
+***
+
+In our case, the score would be calculated from the column "choice".
+
+To create a statistic, we need to transform a `chr` to something we can count (e.g., `dbl` or `lgl`).
+Change `R` and `L` to `0` and `1` using `ifelse`.
+
+```{r noAlternation1}
+df <- df %>% mutate(turn = ifelse( choice == "R" , 0, 1))
+head(df,n=5)
+```
+
+***
+
+The "turn" column now tells us whether the animal turned right(0) or left(1).
+
+Now summarize this information as a new variable for each mouse on each block.
+
+Also get the performance from the `correct` column, as done last week.
+
+***
+
+```{r noAlternation2, out.width = "800px"}
+df1 <- df %>% 
+  group_by(mouse,block) %>% 
+  summarise(nonAlternance = mean(turn),performance = mean(correct))
+df1
+```
+
+***
+
+Our nonAlternance score is 0 or 1 if the mouse always goes to the right or left, respectively.
+
+To know if mice prefer left or right turns, plot the distribution of nonAlternation.
+
+*** 
+
+```{r noAlternation3,out.width = "500px"}
+df1 %>% 
+  ggplot() +
+  geom_histogram(mapping = aes(x = nonAlternance),binwidth = 0.1)
+```
+
+The distribution is not centered on 0.5. This means that our mice had a small tendency to turn left in our experimental room.
+
+***
+
+Plot the performance and nonAlternation to see how the two variables are related.
+
+***
+
+```{r noAlternation4,out.width = "500px"}
+df1 %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = nonAlternance, y = performance))
+```
+
+Many points are on top of each other. This is called [overplotting](https://www.data-to-viz.com/caveat/overplotting.html). 
+
+Try solving this by setting `position="jitter"` or `alpha=0.1`.
+
+*** 
+
+```{r noAlternation5,out.width = "400px"}
+df1 %>% 
+  ggplot() +
+  geom_point(mapping = aes(x = nonAlternance, y = performance),
+             position = "jitter") +
+  geom_smooth(mapping = aes(x = nonAlternance, y = performance),
+              method = "loess",formula = 'y ~ x')
+```
+
+The geom_smooth helps you see the pattern in the data.
+
+If a mouse always goes to the same goal arm (e.g., always left), it is not alternating. Therefore, the performance goes down.
+
+
+***
+
+Plot the nonAlternance on every block for every mice, with our chance level line at 0.5.
+
+*** 
+
+```{r nonAlternance6,out.width = "400px"}
+df1 %>% 
+  ggplot() +
+  geom_line(mapping=aes(x=block,y=nonAlternance)) +
+  geom_hline(yintercept = 0.5, alpha=0.5) +
+  facet_wrap(~mouse)
+```
+
+Most mice had a moderate tendency to turn left (1), but one (Mn7735) had a persistent tendency to turn right (0).
+
+Can you add the performance to this graph?
+
+***
+
+
+```{r nonAlternance8,out.width = "400px"}
+df1 %>% 
+  ggplot() +
+  geom_line(mapping=aes(x=block,y=performance) ) +
+  geom_line(mapping=aes(x=block,y=nonAlternance),color="blue",alpha=0.3) +
+  geom_hline(yintercept = 0.5, alpha=0.5) +
+  facet_wrap(~mouse)
+```
+
+***
+
+Here we add label to each point.
+
+```{r nonAlternance7,out.width = "400px"}
+df %>% group_by(mouse) %>% 
+  summarise(nonAlternance = mean(turn),performance = mean(correct)) %>% 
+  ggplot(mapping=aes(x=nonAlternance,y=performance)) +
+  geom_point() +
+  geom_text(aes(label=mouse),hjust=-0.1,vjust=0.5) +
+  xlim(0.2,0.8)
+```
+
+So the poor performance of Mn7735 is associated with a tendency to turn right during the choice phase of the trials.
