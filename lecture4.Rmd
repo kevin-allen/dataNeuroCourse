@@ -7,9 +7,11 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(global.par = TRUE)
+set.seed(114)
 ```
 
 ## Today's plan
@@ -19,7 +21,7 @@ library(knitr)
   + Correlation 
   + t-test
   + ANOVA
-  + Common assumptions and common errors
+  + Common errors in statistics
 
 
 ## Combining information from several data frames
@@ -44,10 +46,8 @@ dplyr has several functions to do this.
 
 ## Combining information from several data frames
 
-Let's assign a genotype to each mouse in a new data frame.
-
 ```{r relational1}
-dfGeno<-tibble(mouse=c("Mn4656","Mn848","Mn4672","Mn4673",
+dfGeno <- tibble(mouse=c("Mn4656","Mn848","Mn4672","Mn4673",
                            "Mn7712","Mn7735","Mn829"),
            genotype=c("wt","wt","wt","wt",
                       "ko","ko","ko"))
@@ -92,9 +92,10 @@ df %>%
 ```{r relational5}
 df_join <- df %>% 
   left_join(dfGeno,by="mouse") # match with mouse
-df_join
+print(df_join,n=6)
 ```
-We now have an additional variable (genotype) in df.
+
+## Want to know more
 
 For more information: [Relational data and dplyr](https://r4ds.had.co.nz/relational-data.html)
 
@@ -110,13 +111,16 @@ For more information: [Relational data and dplyr](https://r4ds.had.co.nz/relatio
 ## General tip for statistics
 
 Always plot the data. Don't do blind statistical testing. 
+```{r set, echo = FALSE}
+par(bty = 'n', mar=c(4,4,1,0.1), mgp=c(2,1,0)) 
+```
 
 ```{r, fig.width = 4, fig.height=3}
 ggplot(data=mpg)+
   geom_point(mapping = aes(x=cty,y=displ),position="jitter")
 ```
 
-[Garbage in, barbage out](https://en.wikipedia.org/wiki/Garbage_in,_garbage_out#:~:text=In%20computer%20science%2C%20garbage%20in,out%20(RIRO)%20is%20used)
+Prevent the ["garbage in, garbage out"](https://en.wikipedia.org/wiki/Garbage_in,_garbage_out#:~:text=In%20computer%20science%2C%20garbage%20in,out%20(RIRO)%20is%20used) effect.
 
 ## Input data
 
@@ -138,25 +142,64 @@ Look for a linear relationships between two variables ($x$ and $y$).
 Correlation coefficient ($r$).
 
 $$ r_{xy} = \frac{\sum_{i=1}^{n} (x_i-\bar{x})(y_i-\bar{y})} {\sqrt{ \sum_{i=1}^{n} (x_i-\bar{x})^2  \sum_{i=1}^{n} (y_i-\bar{y})^2    }}  $$
+$r$ varies from -1 to 1.
 
-## Degrees of freedom
+## Linear correlation
+
+Let's generate random data for testing.
+
+```{r lincor,fig.width = 4, fig.height=3.5}
+n = 40
+# x = random numbers from a gaussian distribution
+x <- rnorm (n = n, mean = 0, sd = 1) 
+# x multiplied by 2 plus 50 and some gaussian noise
+y <- 2 * x + 50 + rnorm( n = n, mean = 0, sd = 2.5) 
+x[1:10] # print 10 numbers from x
+y[1:10] # print 10 numbers from y
+```
+
+## Linear correlation
+
+
+```{r example,fig.width = 4, fig.height=3.0}
+r_value = sum( (x-mean(x)) * (y - mean(y))) / 
+  sqrt( sum((x-mean(x))^2) * sum((y-mean(y))^2))
+plot(x,y)
+print(paste("My r value:", round(r_value,2)))
+```
+
+
+
+## Linear correlation, degrees of freedom
 
 The number of independent values that can vary in an analysis without breaking any constraints.
 
 For a linear correlation: $df = n-2$
 
-## Linear correlation
+## Linear correlation, p value
 
-p value: From r to t, from t to p.
+We need to decide whether there is a significant relationship between x and y. 
+
+The p value tells you the probability of obtaining a specific r value (`r round(r_value,2)`) by chance. If it is less than 5%, we claim that there is a significan relationship between x and y.
+
+## Linear correlation, p value
 
 $t = \frac{r}{\sqrt{1-r^2}}\sqrt{n-2}$
 
-```{r,fig.width = 4, fig.height=3.5}
-t_val = seq(-5,5,0.1)
-plot(t_val,dt(t_val,df=10),type='l',ylab="Probability",xlab="t")
+```{r}
+t_value = r_value * sqrt(n-2) / sqrt(1-r_value^2)
+print(paste("t:",round(t_value,4), 
+            ", p:", round(1-pt(t_value,df = n-2),4)))
+```
+
+```{r,fig.width = 4, fig.height=3.0, echo=FALSE}
+t_val = seq(-8,8,0.1)
+plot(t_val,dt(t_val,df=n-2),type='l',ylab="Probability",xlab="t")
 ```
 
 ## Example 1
+
+Now let's see how you would normally do this in R, starting from a data frame.
 
 First have a look at the input data
 
@@ -165,12 +208,33 @@ ggplot(data=attitude)+
   geom_point(mapping = aes(x=rating,y=complaints))
 ```
 
-***
+## Example 1
 
-Then perform the calculations
+All the calculation is done by `cor.test()`.
 
 ```{r cor_example}
 cor.test(attitude$rating,attitude$complaints)
+```
+If p < 0.05, there is a linear relationship between the two variables.
+
+
+<!-- *** -->
+<!-- We could also use a linear model -->
+<!-- ```{r lm} -->
+<!-- myLm <-lm(rating~complaints,data=attitude) -->
+<!-- summary(myLm) -->
+<!-- ``` -->
+
+
+## Example 1
+
+You can also save the results for later use.
+
+```{r cor_exp2}
+res <- cor.test(attitude$rating,attitude$complaints)
+print(paste("r:", res$estimate, res$estimate^2))
+print(paste("t:",res$statistic))
+print(paste("p:",res$p.value))
 ```
 
 ## Example 2
@@ -178,6 +242,8 @@ cor.test(attitude$rating,attitude$complaints)
 Using the `mpg` data frame, test whether there is a linear relationship between the engine displacement and the city miles per gallon.
 
 Tip: use `?mpg` if you want a reminder of what is in this data frame.
+
+You have 4 minutes to complete this task.
 
 ## Example 2: plot
 
@@ -193,7 +259,7 @@ cor.test(mpg$displ,mpg$cty)
 ```
 Negative correlation coefficients are for negative slopes.
 
-## Main assumptions of the linear correlation test
+## Assumptions for linear correlations
 
 * The relationship is linear
 * The data (x and y) are normally distributed (see shapiro.test()).
@@ -204,11 +270,47 @@ The p value has no real meaning if the assumptions of the test are violated.
 Alternative: Spearman or Kendall rank correlation (method = c("pearson", "kendall", "spearman"))
 
 
-## Warning
+## How can things go wrong?
+```{r seed2, echo=FALSE}
+set.seed(111)
+```
+
+Non-linear relationships
+
+```{r nonlinear,fig.width = 4, fig.height=3}
+n=50
+x <- rnorm (n = n, mean = 0, sd = 1) 
+y <- x^2 + rnorm(n = n, mean =0, sd = 0.2)
+res <- cor.test(x,y)
+plot(x,y,main=paste("r:",round(res$estimate,3),
+                    ", p:",round(res$p.value,3)))
+```
 
 
+## How can things go wrong?
 
+Random data
+```{r change, echo = FALSE}
+n=10
+```
+```{r outl,fig.height = 3, fig.width= 4}
+x <- rnorm (n = n, mean = 0, sd = 1) 
+y <- rnorm (n = n, mean = 0, sd = 1)
+res <- cor.test(x,y)
+plot(x,y,main=paste("r:",round(res$estimate,3),
+                    ", p:",round(res$p.value,3)))
+```
 
+## How can things go wrong?
+
+Random data and **one outlier**
+```{r outl2,fig.height = 3, fig.width= 4}
+x <-c(x, 4)
+y <-c(y, 4)
+res <- cor.test(x,y)
+plot(x,y,main=paste("r:",round(res$estimate,3),
+                    ", p:",round(res$p.value,3)))
+```
 
 
 ## Reading for this week
