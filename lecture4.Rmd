@@ -99,22 +99,117 @@ We now have an additional variable (genotype) in df.
 For more information: [Relational data and dplyr](https://r4ds.had.co.nz/relational-data.html)
 
 
-Time to use `git` to `commit` and `push` your changes to your online repository.
-
-
 ## Common statistics with R
 
-1. Correlation 
+1. Linear correlation 
 2. t-test
 3. Wilcoxon tests
 3. ANOVAs
-4. Common assumptions and common errors
+4. Common errors in statistics
 
-## Warnings
+## General tip for statistics
 
-Always make sure that you understand the assumptions associated with each test.
+Always plot the data. Don't do blind statistical testing. 
 
-A p value has no real meaning if the assumptions of the test are violated.
+```{r, fig.width = 4, fig.height=3}
+ggplot(data=mpg)+
+  geom_point(mapping = aes(x=cty,y=displ),position="jitter")
+```
+
+[Garbage in, barbage out](https://en.wikipedia.org/wiki/Garbage_in,_garbage_out#:~:text=In%20computer%20science%2C%20garbage%20in,out%20(RIRO)%20is%20used)
+
+## Input data
+
+Functions calculating statistics often require **numeric vectors** as input. 
+
+If you have a data frame, you may need to extract a single column.
+
+```{r, results = 'hide'}
+# classic R
+mpg$displ
+# or tidyverse style
+mpg %>% pull(displ)
+```
+
+## Linear correlation (Pearson) 
+
+Look for a linear relationships between two variables ($x$ and $y$).
+
+Correlation coefficient ($r$).
+
+$$ r_{xy} = \frac{\sum_{i=1}^{n} (x_i-\bar{x})(y_i-\bar{y})} {\sqrt{ \sum_{i=1}^{n} (x_i-\bar{x})^2  \sum_{i=1}^{n} (y_i-\bar{y})^2    }}  $$
+
+## Degrees of freedom
+
+The number of independent values that can vary in an analysis without breaking any constraints.
+
+For a linear correlation: $df = n-2$
+
+## Linear correlation
+
+p value: From r to t, from t to p.
+
+$t = \frac{r}{\sqrt{1-r^2}}\sqrt{n-2}$
+
+```{r,fig.width = 4, fig.height=3.5}
+t_val = seq(-5,5,0.1)
+plot(t_val,dt(t_val,df=10),type='l',ylab="Probability",xlab="t")
+```
+
+## Example 1
+
+First have a look at the input data
+
+```{r example_correlation, fig.width=3,fig.height=3}
+ggplot(data=attitude)+
+  geom_point(mapping = aes(x=rating,y=complaints))
+```
+
+***
+
+Then perform the calculations
+
+```{r cor_example}
+cor.test(attitude$rating,attitude$complaints)
+```
+
+## Example 2
+
+Using the `mpg` data frame, test whether there is a linear relationship between the engine displacement and the city miles per gallon.
+
+Tip: use `?mpg` if you want a reminder of what is in this data frame.
+
+## Example 2: plot
+
+```{r, fig.width = 4, fig.height=3}
+ggplot(data=mpg)+
+  geom_point(mapping = aes(x=cty,y=displ),position="jitter")
+```
+
+## Example 2: statistics
+
+```{r}
+cor.test(mpg$displ,mpg$cty)
+```
+Negative correlation coefficients are for negative slopes.
+
+## Main assumptions of the linear correlation test
+
+* The relationship is linear
+* The data (x and y) are normally distributed (see shapiro.test()).
+* The data points are independent of each other (not from same subject).
+
+The p value has no real meaning if the assumptions of the test are violated.
+
+Alternative: Spearman or Kendall rank correlation (method = c("pearson", "kendall", "spearman"))
+
+
+## Warning
+
+
+
+
+
 
 ## Reading for this week
 
