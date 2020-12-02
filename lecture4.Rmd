@@ -18,7 +18,7 @@ set.seed(114)
 
 1. Combining information from several data frames
 2. Common statistical procedures with R
-  + Correlation 
+  + Linear correlation 
   + t-test
   + ANOVA
   + Common errors in statistics
@@ -104,7 +104,6 @@ For more information: [Relational data and dplyr](https://r4ds.had.co.nz/relatio
 
 1. Linear correlation 
 2. t-test
-3. Wilcoxon tests
 3. ANOVAs
 4. Common errors in statistics
 
@@ -134,6 +133,10 @@ mpg$displ
 # or tidyverse style
 mpg %>% pull(displ)
 ```
+
+## Why do we use statistical tests
+
+To show that the patterns we see in the data are not due to random fluctuations.
 
 ## Linear correlation (Pearson) 
 
@@ -167,8 +170,6 @@ r_value = sum( (x-mean(x)) * (y - mean(y))) /
 plot(x,y)
 print(paste("My r value:", round(r_value,2)))
 ```
-
-
 
 ## Linear correlation, degrees of freedom
 
@@ -216,15 +217,6 @@ All the calculation is done by `cor.test()`.
 cor.test(attitude$rating,attitude$complaints)
 ```
 If p < 0.05, there is a linear relationship between the two variables.
-
-
-<!-- *** -->
-<!-- We could also use a linear model -->
-<!-- ```{r lm} -->
-<!-- myLm <-lm(rating~complaints,data=attitude) -->
-<!-- summary(myLm) -->
-<!-- ``` -->
-
 
 ## Example 1
 
@@ -312,7 +304,144 @@ plot(x,y,main=paste("r:",round(res$estimate,3),
                     ", p:",round(res$p.value,3)))
 ```
 
+## t-test
+
+Test if there is a difference between
+
+* the mean of one group to a known value (one-sample t test)
+* the means of **2** groups (two-sample t test)
+
+Fun fact: Developed by William Sealy Gosset who worked as Head Brewer at Guinness in Dublin. He published under the pseudonym of "Student".
+
+## one-sample t test
+
+We want to test whether some values are significantly different from a value (e.g., 0).
+
+Assumes that the data come from a normal distribution.
+
+Degrees of freedom, $df = N-1$
+
+
+## One-sample t test
+
+$$ t = \frac{\bar{X} - \mu} {s/\sqrt{N}} $$
+where $\bar{X}$ is the mean of your sample, $\mu$ is the mean of the population, $s^2$ is the standard deviation of your sample.   
+
+## One-sample t test example
+
+We want to know whether the IQ of a group of undergraduate students is different than that of the general population (100).
+We obtain scores from 12 students and perform a t-test.
+
+
+## One-sample t test example
+
+Don't forget to look at your data
+
+```{r ttest_example,fig.height = 3, fig.width= 4}
+gs <- data.frame(IQ = c(103,123,95,132,113,102,98,97,110,102,112,98)) # data entries
+ggplot(data = gs) + 
+  geom_histogram(mapping = aes(x=IQ),binwidth = 2)
+```
+
+
+## One-sample t test example
+
+Test for normality with the Shapiro-Wilk test.
+
+If p < 0.05, then your distribution is not normal.
+
+```{r test_normality}
+shapiro.test(gs$IQ)
+```
+
+## One-sample t test example
+
+Perform the t test
+
+```{r ttest_example2}
+t.test(x = gs$IQ,
+       alternative = "two.sided",
+       mu = 100)
+```
+
+
+## Two-sample t test
+
+Comparing the mean in **2** groups.
+
+* Two dependent groups (same cells or subjects tested twice)
+* Two independent groups (different cells or subjects)
+
+
+## t test for dependent samples
+
+We measure the firing rate of the same neurons in two conditions (t0 and t1) and want to know if the firing rate changed.
+
+```{r twosamples}
+neurons <- data.frame(t0 = c(2.5,1.4,3.2,2.5,3.4,2.5,4.6,3.0),
+           t1 = c(2.7,1.7,3.2,2.7,3.8,2.9,4.6,3.2))
+neurons
+```
+
+## t test for dependent samples
+
+```{r twosamples2,fig.height = 3, fig.width= 4}
+ggplot(data=neurons)+
+  geom_histogram(aes(x=t0),binwidth=0.1)+
+  geom_histogram(aes(x=t1),fill="red",alpha=0.5,binwidth=0.1)
+```
+
+Notice that are data frame is not in the best format for ggplot.
+
+## Reshape for ggplot
+```{r pivot}
+neurons_long <- neurons %>%
+  gather(key="condition", value = "rate", starts_with("t"))
+neurons_long
+```
+***
+```{r neurons_long}
+ggplot(data=neurons_long)+
+  geom_boxplot(mapping = aes(x = condition,y=rate))
+```
+
+
+## t test for dependent samples
+
+```{r dependentt}
+t.test(x = neurons$t0,
+       y = neurons$t1,
+       alternative = "two.sided",
+       paired = TRUE)
+```
+Significant results despite a very small effect (0.2125)
+
+## t test for independent samples
+
+We measure the firing rate of different neurons in two conditions (t0 and t1) and want to know if the firing rate is different between the two conditions.
+
+Let's use the same data as before, but this time we treat the samples as independent.
+
+## t test for independent samples
+
+Our effect is gone because there is a lot of variability in our data.
+
+```{r testindepended}
+t.test(x = neurons$t0,
+       y = neurons$t1,
+       alternative = "two.sided",
+       paired = FALSE)
+```
+
+
+
+## ANOVA
+
 
 ## Reading for this week
 
 [Ten common statistical mistakes (eLife, 2019)](https://elifesciences.org/articles/48175?gclid=Cj0KCQiAwf39BRCCARIsALXWETyV3Dhu7jGevlenU1oh2zzLo812jOvAeparT0UYPEY9hPOFI34ECUQaAkBEEALw_wcB)
+
+This article covers the most common statistical mistakes done by scientists. They are very common. 
+
+Learn to detect them and eliminate them from your work.
