@@ -1,8 +1,9 @@
 ---
 title: "Data science and analysis in Neuroscience"
 author: "Kevin Allen"
-date: "November 7, 2019"
+date: "November 12, 2020"
 output:
+  
   ioslides_presentation: default
   slidy_presentation: default
   beamer_presentation: default
@@ -33,7 +34,6 @@ Turn raw data into understanding, insight and knowledge.
 knitr::include_graphics("images/data-science.png")
 ```
 
-
 ## Course objectives
 
 1. Identify the principal tools available in data science.
@@ -46,19 +46,15 @@ knitr::include_graphics("images/data-science.png")
 
 ## Supporting materials
 
-1. [R for Data Science](https://r4ds.had.co.nz/)
+[R for Data Science](https://r4ds.had.co.nz/)
 
 ```{r, echo=FALSE, out.width = "100px"}
 knitr::include_graphics("images/rds_cover.png")
 ```
+Available online.
 
-2. [An Introduction to Statistical Learning: With Applications in R](https://www.academia.edu/36691506/An_Introduction_to_Statistical_Learning_Springer_Texts_in_Statistics_An_Introduction_to_Statistical_Learning). 
 
-```{r, echo=FALSE, out.width="100px"}
-knitr::include_graphics("images/isl_cover.jpeg")
-```
-
-Both books are available online.
+[Datacamp web site](www.datacamp.com)
 
 ## Conventions in the slides
 
@@ -98,9 +94,9 @@ git pull
 ## Lecture format
 
 1. Short introduction of topics
-2. Exercises in small groups
+2. Exercises
 3. Review of exercises
-4. Homeworks: readings or some exercises
+4. Homeworks: readings and some exercises
 5. Review quizzes
 
 It is your course, interrupt me as often as you like.
@@ -110,34 +106,39 @@ It is your course, interrupt me as often as you like.
 
 A short survey of the classroom.
 
-https://tinyurl.com/y2rtpf2h
+https://tinyurl.com/y5m46ghz
 
 
 ## Data science landscape
 ### Matlab
 
 Stable environment, singal processing, matrix operations
-
-Weakness: Proprietary programming language -> Implications in science
+**Weakness**: Proprietary programming language ($)
 
 ### Python
-Open-source language, general-purpose, popularity rising, TensorFlow for machine learning
+
+Open-source language, very popular, good for signal processing or processing images. 
+
+Excellent for machine learning and deep learning
 
 ### R
-Open-source language, statistical analysis, visualization, R packages, RStudio
+
+Open-source language, traditional statistical analysis, visualization, R packages, RStudio
+
+A good entry point to data analysis
 
 
 ## Data science landscape
 
-Recommendation: Use open-source languages (`R` and `python`).
+Recommendations: Use open-source languages (`R` and `python`).
 
 Both `R` and `python` are great tools for data analysis.
 
 In the end, the most crucial point is to get the job done.
 
-We will use mainly `R`. 
+We will mainly use `R`. 
 
-We will use `python` for our `deeplabcut` project.
+Some simple `python` will be used at the very end (`deeplabcut` project).
 
 ## RStudio
 ```{r, echo=FALSE,out.width = "650px"}
@@ -264,6 +265,7 @@ mySum <- function(iOne=1, iTwo = 3){
 mySum()
 ```
 
+TRICK: Use tab to complete the name of a function in RStudio.
 
 
 ## Object types
@@ -277,7 +279,6 @@ y <- "neuroscience"
 class(y)
 ```
 
-TRICK: Use tab to complete the name of a function in RStudio.
 
 ## Data frames
 
@@ -292,7 +293,7 @@ df<-data.frame(firstName=c("Sonia","Bruno","Paul"),
 df
 ```
 
-Trick: Use `view(df)` to get a more excel-like look.
+Trick: Use `View(df)` to get a more excel-like look.
 
 ## Data frames
 
@@ -305,9 +306,15 @@ df
 3. A `column` often contains a variable (e.g., height). 
 4. A `cell` contains a single value.
 
+## Data frames
+
+In this course, we will be working mainly with data frames.
+
 TRICK: Organize your data frame with one entry per row whenever possible. 
 
 ## Subsetting data frames
+
+This is the traditional `R` way.
 
 ```{r dataFrame3}
 # one variable
@@ -354,7 +361,7 @@ To load the package in your R session
 library("package_name")
 ```
 
-## Exercise
+## Exercises
 
 We will use the mpg data set that comes with tidyverse, so load tidyverse.
 You can get information with `?mpg`.
@@ -374,23 +381,16 @@ mean(mpg$cty[1:10])
 mean(mpg$cty[mpg$year==2008])
 ```
 
-## Next week
-I am in Magdeburg for a collaborative grant application.
-
-Solution
-
-We have slightly longer sessions on the 21st, 28th of November 5th of December. 
-
-
 ## To do before the next lecture
 
 1. Install [git](https://git-scm.com/) on your computer.
 2. Reading: R for Data Science, Chapters 1 and 2.
+3. Datacamp: Introduction to R https://learn.datacamp.com/courses/free-introduction-to-r
 
 
 ## Next lecture
 
-1. Review exercises (15 minutes)
+1. Review of last week (15 minutes)
 2. RStudio editor and .R files. (10 minutes)
 3. git repositories (15 minutes)
 4. Introduction to ggplot2 (30 minutes)

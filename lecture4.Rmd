@@ -1,28 +1,30 @@
 ---
 title: "Data science and analysis in Neuroscience"
 author: "Kevin Allen"
-date: "December 5, 2019"
+date: "December 3, 2019"
 output:
   ioslides_presentation: default
-  beamer_presentation: default
-  slidy_presentation: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(global.par = TRUE)
+set.seed(114)
 ```
 
 ## Today's plan
 
-1. Consolidation of dplyr and ggplot
-2. Saving a graph
-3. Plot with several graphs
-4. git: create your git repository on github
-5. Relational data with dplyr
+1. Combining information from several data frames
+2. Reshaping data frames
+3. Common statistical procedures with R
+  + Linear correlation 
+  + t-test
+  + ANOVA
+  + Common errors in statistics
 
-## dplyr and ggplot
+## Combining information from several data frames
 
 Load the tmaze data set for a few more exercises.
 
@@ -32,334 +34,20 @@ df<-read_csv(myFile)
 df<-mutate(df, correct = sample != choice)
 ```
 
-## dplyr and ggplot
 
-The is a possibility that some mice had a bad performance because they always visited the same goal arm instead of alternating. 
-
-How could we process the data to get a score per mouse telling us if the mouse always choose the same arm?
-
-
-## Break down your programming task into smaller tasks.
-
-* Which column contains this information?
-* How can we go from the values in this column to a statistic (number)?
-* Once you have the information, choose a plot?
-
-Alternatively
-
-* Imagine which plot would convey your message best (draw some on paper)
-* Find out which steps are needed to produce this graph.
-
-***
-
-To get a statistic, we need to transform a `chr` to something we can count (e.g., `dbl` or `lgl`).
-Change `R` and `L` to `0` and `1` using `ifelse`.
-
-```{r noAlternation1}
-df <- df %>% mutate(turn = ifelse( choice == "R" , 0, 1))
-head(df,n=5)
-```
-
-***
-
-Now summarize this information as a new variable for each mouse on each block.
-
-Also get the performance from the `correct` column, as done last week.
-
-***
-
-```{r noAlternation2, out.width = "800px"}
-df1 <- df %>% 
-  group_by(mouse,block) %>% 
-  summarise(nonAlternance = mean(turn),performance = mean(correct))
-df1
-```
-
-***
-
-To know if mice prefer left or right turns, plot the distribution of nonAlternation.
-
-*** 
-
-```{r noAlternation3,out.width = "500px"}
-df1 %>% 
-  ggplot() +
-  geom_histogram(mapping = aes(x = nonAlternance),binwidth = 0.1)
-```
-
-Mice have a small tendency to turn right in our experimental room.
-
-***
-
-Plot the performance and nonAlternation to see how the two variables are related.
-
-***
-
-```{r noAlternation4,out.width = "500px"}
-df1 %>% 
-  ggplot() +
-  geom_point(mapping = aes(x = nonAlternance, y = performance))
-```
-
-Most points are on top of each other. This is called [overplotting](https://www.data-to-viz.com/caveat/overplotting.html). 
-
-Try solving this by setting `position="jitter"` or `alpha=0.1`.
-
-*** 
-
-```{r noAlternation5,out.width = "400px"}
-df1 %>% 
-  ggplot() +
-  geom_point(mapping = aes(x = nonAlternance, y = performance),
-             position = "jitter") +
-  geom_smooth(mapping = aes(x = nonAlternance, y = performance),
-              method = "loess")
-```
-
-The geom_smooth helps you see the pattern in the data.
-
-If a mouse always goes to the same goal arm (e.g., left), it won't be performing well.
-
-
-***
-
-Plot the nonAlternance on every block for every mice, with our chance lever line at 0.5.
-
-*** 
-
-```{r nonAlternance6,out.width = "400px"}
-df1 %>% 
-  ggplot() +
-  geom_line(mapping=aes(x=block,y=nonAlternance)) +
-  geom_hline(yintercept = 0.5, alpha=0.5) +
-  facet_wrap(~mouse)
-```
-
-Most mice had a tendency to turn left, but one (Mn7735) had a persistent tendency to turn right.
-
-Can you add the performance to this graph?
-
-***
-
-
-```{r nonAlternance8,out.width = "400px"}
-df1 %>% 
-  ggplot() +
-  geom_line(mapping=aes(x=block,y=performance) ) +
-  geom_line(mapping=aes(x=block,y=nonAlternance),color="blue",alpha=0.3) +
-  geom_hline(yintercept = 0.5, alpha=0.5) +
-  facet_wrap(~mouse)
-```
-
-***
-
-```{r nonAlternance7,out.width = "600px"}
-df %>% 
-  group_by(mouse) %>% 
-  summarise(nonAlternance = mean(turn),performance = mean(correct)) %>% 
-  ggplot(mapping=aes(x=nonAlternance,y=performance)) +
-  geom_point() +
-  geom_text(aes(label=mouse),hjust=-0.1,vjust=0.5) +
-  xlim(0.2,0.8)
-```
-
-## dplyr and ggplot
-
-You are now able to use dplyr and ggplot to extract meaningful information from a dataset!!!
-
-Time to share these nice graphs (export).
-
-## Saving a graph
-
-```{r save1, echo=FALSE,out.width = "800px"}
-knitr::include_graphics("images/rstudio-export-figure.png")
-```
-
-## Saving a graph
-
-`ggsave()` saves the latest plot that was displayed
-
-```{r save2,  fig.width = 3,fig.height=2,results=FALSE}
-df1 %>% 
-  ggplot() +
-  geom_boxplot(mapping=aes(x=block,y=performance,group=block))
-
-myFileName="/home/kevin/Downloads/myPlot.pdf"
-ggsave(filename = myFileName,
-       device = "pdf", units = "cm", 
-       width = 10, height = 10)
-```
-
-
-## Plot with several graphs
-
-* Store graphs as variables
-
-```{r sevGraphs1, fig.width = 3,fig.height=2}
-p1<- df1 %>% 
-  ggplot() +
-  geom_boxplot(mapping=aes(x=block,y=performance,group=block),color="blue")+
-  ggtitle("Performance per block")
-```
-
-```{r sevGraphs2,fig.width = 3,fig.height=2}
-p1
-```
-
-## Plot with several graphs
-
-Let's store several graphs in variables p1, p2, p3 and p4.
-
-```{r, sevGraphs3}
-p1 <- df %>%
-  group_by(mouse, block) %>%
-  summarise(nTrials = n(), performance = mean(correct)) %>%
-  filter(nTrials == 10) %>% 
-  ggplot () +
-    geom_histogram(mapping = aes(x = performance), binwidth = 0.01) +
-    xlab("Performance (prob.)") +
-    ylab("Count")
-```
-
-***
-
-```{r sevGraphs4}
-p2 <- df %>% group_by(mouse,block) %>% 
-  summarise(performance = mean(correct)*100) %>%
-  group_by(block) %>% 
-  summarise(global_performance = mean(performance)) %>% 
-  ggplot() +
-  geom_line(mapping=aes(x=block,y=global_performance),color="blue")+
-  ylim(40,100) +
-  xlab("Block") +
-  ylab("Performance (%)")+
-  geom_hline(mapping = aes(yintercept=50),linetype="dashed")
-```
-
-***
-
-```{r sevGraphs5}
-p3 <-df %>% group_by(mouse,block) %>% 
-  summarise(performance = mean(correct)*100) %>% 
-  ggplot() +
-    geom_point(mapping=aes(x=block,y=performance)) +
-    geom_line(mapping=aes(x=block,y=performance),color = "blue") +
-    ylab("Performance (%)") +
-    xlab("Block") +
-    geom_hline(mapping = aes(yintercept=50),linetype="dashed") +
-    facet_wrap(~mouse)
-```
-
-***
-
-```{r sevGraphs6}
-p4 <- df %>% group_by(mouse,block) %>% 
-  summarise(performance = mean(correct)) %>% 
-  ggplot() +
-  geom_boxplot(mapping=aes(x=block,y=performance*100,group=block),color="blue") +
-  ylab("Performance (%)") +
-  xlab("Block")
-```
-
-***
-
-Now put these graphs together.
-
-```{r sevGraphs7, fig.width = 6,fig.height=4}
-#install.packages("gridExtra")
-library(gridExtra)
-```
-
-***
-  
-```{r sevGraphs8, fig.width = 6,fig.height=5}
-grid.arrange(p1, p2, p3, p4, ncol=2)
-```
-
-***
-  
-Use `pdf()` and `dev.off()` to save your new creation.
-
-```{r sevGraphs9}
-myFileName="/home/kevin/Downloads/allMyPlots.pdf"
-pdf(file=myFileName,paper = "a4") # open the file
-all_ps <- grid.arrange(p1, p2, p3, p4, ncol=2) # write
-dev.off() # close the file
-```
-
-I usually add the final touch to the graphs using [Inkscape](https://inkscape.org/).
-
-## git: install 
-
-Make sure you save any R script open in RStudio. 
-
-Install git on your computer
-
-* Windows and Mac: (http://git-scm.com/downloads)
-* linux: `sudo apt-get install git-core`
-
-Example for Windows : Download for Windows, Run executable, license next,  default location, will install git bash. Use Git and optional Unix tools from the Windows Command Prompt, 3 x next with default
-
-## Set up RStudio
-
-1. Go to Global Options (from the Tools menu)
-2. Click Git/SVN
-3. Click Enable version control interface for RStudio projects
-
-For more [information](https://support.rstudio.com/hc/en-us/articles/200532077-Version-Control-with-Git-and-SVN)
-
-## Create a repository on GitHub.
-
-1. Create an account at [GitHub](https://github.com/) and verify your email
-2. Log in
-3. Click New repository
-4. Set repository name: myNotesDataScience, set to private, check Initialize this repository with a README
-5. Click Create repository
-
-## Create a project with RStudio from your repository
-
-1. Copy the urs of your repository from the github web site. It ends with `.git`
-2. Open RStudio, New Project..., Version Control, Git, 
-3. Enter the url and set directory.
-4. Create project.
-
-## Your first commit and push
-1. Click on commit.
-2. Make sure `myNotesDataScience.Rproj` is staged.
-3. Set commit message to `my first commit`
-4. Click commit
-5. Click on the up arrow to push your commit to the online repository.
-6. Refresh your web browser to see `myNotesDataScience.Rproj` online.
-
-<!-- ## Set up git for your new repository 
-  1. Launch git bash.
-2. type `cd` and `enter`
-3. type `mkdir repo` to create a directory called `repo` in your home directory.
-4. `cd repo`
-5. `git config --global user.name "Your name"`
-6. `git config --global user.email "youremail@hello.com"`
--->
-## Next steps with git...
-
-All you will have to do most of the time.
-
-1. Save the file with your R code in your project directory.
-2. Stage the file
-3. Commit
-4. Push
-
-## Relational data with dplyr
+## Combining information from several data frames
 
 In most project, you need to work with several tables. 
 
 Relations are defined between a pair of tables.
 
-## Relational data with dplyr
+dplyr has several functions to do this.
 
-Let's assign a genotype to each mouse in a new data frame.
+
+## Combining information from several data frames
 
 ```{r relational1}
-dfGeno<-tibble(mouse=c("Mn4656","Mn848","Mn4672","Mn4673",
+dfGeno <- tibble(mouse=c("Mn4656","Mn848","Mn4672","Mn4673",
                            "Mn7712","Mn7735","Mn829"),
            genotype=c("wt","wt","wt","wt",
                       "ko","ko","ko"))
@@ -402,17 +90,396 @@ df %>%
 * Then copies across variables from one table to the other.
 
 ```{r relational5}
-df<- df %>% 
+df_join <- df %>% 
   left_join(dfGeno,by="mouse") # match with mouse
-view(df)
+print(df_join,n=6)
 ```
-We now have an additional variable (genotype) in df.
 
-For more information: [Relational data and dplyr](https://r4ds.had.co.nz/relational-data.html)
+## Want to know more
 
-## (End - 1)
+[Chapter 10, Relational data and dplyr](https://r4ds.had.co.nz/relational-data.html)
 
-This is all for today. 
+## Tidy dataframes
 
-Time to use `git` to `commit` and `push` your changes to your online repository.
+The golden rules of **tidy** data frames
 
+1. Each variable must have its own column.
+2. Each observation must have its own row.
+
+Advantages
+
+1. You only need to learn how to process one type of data frame
+2. dplyr and ggplot are designed to work with tidy data.
+
+## Tidy dataframes
+
+You will eventually encounter datasets that are not tidy.
+
+What is wrong with this data frame?
+```{r tb}
+df <- tibble(country = c("Afghanistan","Brazil","China"),
+       "1999" = c(745, 37737, 80488),
+       "2000" = c(2666, 80488,213766))
+df
+```
+
+## Reshaping data frames into tidy data frames
+
+When some of the columns are not variables but values of a variable.
+
+We need to gather these colums into a new pair of variables.
+```{r gathering}
+df %>% gather('1999','2000', key = 'year', value = 'cases')
+```
+
+## Reshaping data frames into tidy data frames
+
+[Chapter 9, Tidy Data with tidyr](https://r4ds.had.co.nz/tidy-data.html)
+
+There is a good case study with tuberculosis data from the WHO.
+
+## Common statistics with R
+
+1. Linear correlation 
+2. t-test
+3. ANOVAs
+4. Common errors in statistics
+
+## General tip for statistics
+
+Always plot the data. Don't do blind statistical testing. 
+```{r set, echo = FALSE}
+par(bty = 'n', mar=c(4,4,1,0.1), mgp=c(2,1,0)) 
+```
+
+```{r, fig.width = 4, fig.height=3}
+ggplot(data=mpg)+
+  geom_point(mapping = aes(x=cty,y=displ),position="jitter")
+```
+
+Prevent the ["garbage in, garbage out"](https://en.wikipedia.org/wiki/Garbage_in,_garbage_out#:~:text=In%20computer%20science%2C%20garbage%20in,out%20(RIRO)%20is%20used) effect.
+
+## Input data
+
+Functions calculating statistics often require **numeric vectors** as input. 
+
+If you have a data frame, you may need to extract a single column.
+
+```{r, results = 'hide'}
+# classic R
+mpg$displ
+# or tidyverse style
+mpg %>% pull(displ)
+```
+
+## Why do we use statistical tests
+
+To show that the patterns we see in the data are not due to random fluctuations.
+
+## Linear correlation (Pearson) 
+
+Look for a linear relationships between two variables ($x$ and $y$).
+
+Correlation coefficient ($r$).
+
+$$ r_{xy} = \frac{\sum_{i=1}^{n} (x_i-\bar{x})(y_i-\bar{y})} {\sqrt{ \sum_{i=1}^{n} (x_i-\bar{x})^2  \sum_{i=1}^{n} (y_i-\bar{y})^2    }}  $$
+$r$ varies from -1 to 1.
+
+## Linear correlation
+
+Let's generate random data for testing.
+
+```{r lincor,fig.width = 4, fig.height=3.5}
+n = 40
+# x = random numbers from a gaussian distribution
+x <- rnorm (n = n, mean = 0, sd = 1) 
+# x multiplied by 2 plus 50 and some gaussian noise
+y <- 2 * x + 50 + rnorm( n = n, mean = 0, sd = 2.5) 
+x[1:10] # print 10 numbers from x
+y[1:10] # print 10 numbers from y
+```
+
+## Linear correlation
+
+
+```{r example,fig.width = 4, fig.height=3.0}
+r_value = sum( (x-mean(x)) * (y - mean(y))) / 
+  sqrt( sum((x-mean(x))^2) * sum((y-mean(y))^2))
+plot(x,y)
+print(paste("My r value:", round(r_value,2)))
+```
+
+## Linear correlation, degrees of freedom
+
+The number of independent values that can vary in an analysis without breaking any constraints.
+
+For a linear correlation: $df = n-2$
+
+## Linear correlation, p value
+
+We need to decide whether there is a significant relationship between x and y. 
+
+The p value tells you the probability of obtaining a specific r value (`r round(r_value,2)`) by chance. If it is less than 5%, we claim that there is a significan relationship between x and y.
+
+## Linear correlation, p value
+
+$t = \frac{r}{\sqrt{1-r^2}}\sqrt{n-2}$
+
+```{r}
+t_value = r_value * sqrt(n-2) / sqrt(1-r_value^2)
+print(paste("t:",round(t_value,4), 
+            ", p:", round(1-pt(t_value,df = n-2),4)))
+```
+
+```{r,fig.width = 4, fig.height=3.0, echo=FALSE}
+t_val = seq(-8,8,0.1)
+plot(t_val,dt(t_val,df=n-2),type='l',ylab="Probability",xlab="t")
+```
+
+## Example 1
+
+Now let's see how you would normally do this in R, starting from a data frame.
+
+First have a look at the input data
+
+```{r example_correlation, fig.width=3,fig.height=3}
+ggplot(data=attitude)+
+  geom_point(mapping = aes(x=rating,y=complaints))
+```
+
+## Example 1
+
+All the calculation is done by `cor.test()`.
+
+```{r cor_example}
+cor.test(attitude$rating,attitude$complaints)
+```
+If p < 0.05, there is a linear relationship between the two variables.
+
+## Example 1
+
+You can also save the results for later use.
+
+```{r cor_exp2}
+res <- cor.test(attitude$rating,attitude$complaints)
+print(paste("r:", res$estimate, res$estimate^2))
+print(paste("t:",res$statistic))
+print(paste("p:",res$p.value))
+```
+
+## Example 2
+
+Using the `mpg` data frame, test whether there is a linear relationship between the engine displacement and the city miles per gallon.
+
+Tip: use `?mpg` if you want a reminder of what is in this data frame.
+
+You have 4 minutes to complete this task.
+
+## Example 2: plot
+
+```{r, fig.width = 4, fig.height=3}
+ggplot(data=mpg)+
+  geom_point(mapping = aes(x=cty,y=displ),position="jitter")
+```
+
+## Example 2: statistics
+
+```{r}
+cor.test(mpg$displ,mpg$cty)
+```
+Negative correlation coefficients are for negative slopes.
+
+## Assumptions for linear correlations
+
+* The relationship is linear
+* The data (x and y) are normally distributed (see shapiro.test()).
+* The data points are independent of each other (not from same subject).
+
+The p value has no real meaning if the assumptions of the test are violated.
+
+Alternative: Spearman or Kendall rank correlation (method = c("pearson", "kendall", "spearman"))
+
+
+## How can things go wrong?
+```{r seed2, echo=FALSE}
+set.seed(111)
+```
+
+Non-linear relationships
+
+```{r nonlinear,fig.width = 4, fig.height=3}
+n=50
+x <- rnorm (n = n, mean = 0, sd = 1) 
+y <- x^2 + rnorm(n = n, mean =0, sd = 0.2)
+res <- cor.test(x,y)
+plot(x,y,main=paste("r:",round(res$estimate,3),
+                    ", p:",round(res$p.value,3)))
+```
+
+
+## How can things go wrong?
+
+Random data
+```{r change, echo = FALSE}
+n=10
+```
+```{r outl,fig.height = 3, fig.width= 4}
+x <- rnorm (n = n, mean = 0, sd = 1) 
+y <- rnorm (n = n, mean = 0, sd = 1)
+res <- cor.test(x,y)
+plot(x,y,main=paste("r:",round(res$estimate,3),
+                    ", p:",round(res$p.value,3)))
+```
+
+## How can things go wrong?
+
+Random data and **one outlier**
+```{r outl2,fig.height = 3, fig.width= 4}
+x <-c(x, 4)
+y <-c(y, 4)
+res <- cor.test(x,y)
+plot(x,y,main=paste("r:",round(res$estimate,3),
+                    ", p:",round(res$p.value,3)))
+```
+
+## t-test
+
+Test if there is a difference between
+
+* the mean of one group to a known value (one-sample t test)
+* the means of **2** groups (two-sample t test)
+
+Fun fact: Developed by William Sealy Gosset who worked as Head Brewer at Guinness in Dublin. He published under the pseudonym of "Student".
+
+## one-sample t test
+
+We want to test whether some values are significantly different from a value (e.g., 0).
+
+Assumes that the data come from a normal distribution.
+
+Degrees of freedom, $df = N-1$
+
+
+## One-sample t test
+
+$$ t = \frac{\bar{X} - \mu} {s/\sqrt{N}} $$
+where $\bar{X}$ is the mean of your sample, $\mu$ is the mean of the population, $s^2$ is the standard deviation of your sample.   
+
+## One-sample t test example
+
+We want to know whether the IQ of a group of undergraduate students is different than that of the general population (100).
+We obtain scores from 12 students and perform a t-test.
+
+
+## One-sample t test example
+
+Don't forget to look at your data
+
+```{r ttest_example,fig.height = 3, fig.width= 4}
+gs <- data.frame(IQ = c(103,123,95,132,113,102,98,97,110,102,112,98)) # data entries
+ggplot(data = gs) + 
+  geom_histogram(mapping = aes(x=IQ),binwidth = 2)
+```
+
+
+## One-sample t test example
+
+Test for normality with the Shapiro-Wilk test.
+
+If p < 0.05, then your distribution is not normal.
+
+```{r test_normality}
+shapiro.test(gs$IQ)
+```
+
+## One-sample t test example
+
+Perform the t test
+
+```{r ttest_example2}
+t.test(x = gs$IQ,
+       alternative = "two.sided",
+       mu = 100)
+```
+
+
+## Two-sample t test
+
+Comparing the mean in **2** groups.
+
+* Two dependent groups (same cells or subjects tested twice)
+* Two independent groups (different cells or subjects)
+
+
+## t test for dependent samples
+
+We measure the firing rate of the same neurons in two conditions (t0 and t1) and want to know if the firing rate changed.
+
+```{r twosamples}
+neurons <- data.frame(t0 = c(2.5,1.4,3.2,2.5,3.4,2.5,4.6,3.0),
+           t1 = c(2.7,1.7,3.2,2.7,3.8,2.9,4.6,3.2))
+neurons
+```
+
+## t test for dependent samples
+
+```{r twosamples2,fig.height = 3, fig.width= 4}
+ggplot(data=neurons)+
+  geom_histogram(aes(x=t0),binwidth=0.1)+
+  geom_histogram(aes(x=t1),fill="red",alpha=0.5,binwidth=0.1)
+```
+
+Notice that are data frame is not in the best format for ggplot.
+
+## Reshape for ggplot
+```{r pivot}
+neurons_long <- neurons %>%
+  gather(key="condition", value = "rate", starts_with("t"))
+neurons_long
+```
+***
+```{r neurons_long}
+ggplot(data=neurons_long)+
+  geom_boxplot(mapping = aes(x = condition,y=rate))
+```
+
+
+## t test for dependent samples
+
+```{r dependentt}
+t.test(x = neurons$t0,
+       y = neurons$t1,
+       alternative = "two.sided",
+       paired = TRUE)
+```
+Significant results despite a very small effect (0.2125)
+
+## t test for independent samples
+
+We measure the firing rate of different neurons in two conditions (t0 and t1) and want to know if the firing rate is different between the two conditions.
+
+Let's use the same data as before, but this time we treat the samples as independent.
+
+## t test for independent samples
+
+Our effect is gone because there is a lot of variability in our data.
+
+```{r testindepended}
+t.test(x = neurons$t0,
+       y = neurons$t1,
+       alternative = "two.sided",
+       paired = FALSE)
+```
+
+
+
+## ANOVA
+
+
+## Reading for this week
+
+[Ten common statistical mistakes (eLife, 2019)](https://elifesciences.org/articles/48175?gclid=Cj0KCQiAwf39BRCCARIsALXWETyV3Dhu7jGevlenU1oh2zzLo812jOvAeparT0UYPEY9hPOFI34ECUQaAkBEEALw_wcB)
+
+This article covers the most common statistical mistakes done by scientists. They are very common. 
+
+Learn to detect them and eliminate them from your work.
