@@ -1,7 +1,7 @@
 ---
 title: "Data science and analysis in Neuroscience"
 author: "Kevin Allen"
-date: "December 3, 2019"
+date: "December 4, 2020"
 output:
   ioslides_presentation: default
 ---
@@ -21,18 +21,19 @@ set.seed(114)
 3. Common statistical procedures with R
   + Linear correlation 
   + t-test
-  + ANOVA
   + Common errors in statistics
 
 ## Combining information from several data frames
 
 Load the tmaze data set for a few more exercises.
 
-```{r load}
+```{r load, message = FALSE}
 myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv" 
 df<-read_csv(myFile)
 df<-mutate(df, correct = sample != choice)
+print(df,n=5)
 ```
+
 
 
 ## Combining information from several data frames
@@ -41,7 +42,7 @@ In most project, you need to work with several tables.
 
 Relations are defined between a pair of tables.
 
-dplyr has several functions to do this.
+`dplyr` has several **join** functions to do this.
 
 
 ## Combining information from several data frames
@@ -123,20 +124,32 @@ df <- tibble(country = c("Afghanistan","Brazil","China"),
 df
 ```
 
-## Reshaping data frames into tidy data frames
+## Tidy dataframes
 
-When some of the columns are not variables but values of a variable.
+
+```{r tb2, echo=FALSE}
+df
+```
+
+Some of the columns are not variables but values of a variable.
+
+Year is a variable. 1999 and 2000 are values of the variable year.
+
+## Reshaping data frames into tidy data frames
 
 We need to gather these colums into a new pair of variables.
 ```{r gathering}
 df %>% gather('1999','2000', key = 'year', value = 'cases')
 ```
 
+Now you can use `dplyr::group_by` and `dplyr::summarize` for example
+
 ## Reshaping data frames into tidy data frames
 
 [Chapter 9, Tidy Data with tidyr](https://r4ds.had.co.nz/tidy-data.html)
 
-There is a good case study with tuberculosis data from the WHO.
+There is a example with a dataset from the World Health Organisation.
+
 
 ## Common statistics with R
 
@@ -145,23 +158,42 @@ There is a good case study with tuberculosis data from the WHO.
 3. ANOVAs
 4. Common errors in statistics
 
+## Why do we need statistical tests
+
+```{r echo=F}
+set.seed(113)
+```
+
+When can we say that our results are not due to chance?
+
+```{r}
+n=10
+x <- rnorm (n = n, mean = 0, sd = 2)
+y <- rnorm (n = n, mean = 0, sd = 2)
+head(x,n=5)
+head(y,n=5)
+print(paste("Means :", round(mean(x),3),", ", round(mean(y),3)))
+```
+
+
 ## General tip for statistics
 
 Always plot the data. Don't do blind statistical testing. 
+
 ```{r set, echo = FALSE}
 par(bty = 'n', mar=c(4,4,1,0.1), mgp=c(2,1,0)) 
 ```
 
 ```{r, fig.width = 4, fig.height=3}
 ggplot(data=mpg)+
-  geom_point(mapping = aes(x=cty,y=displ),position="jitter")
+  geom_point(mapping = aes(x=cty,y=displ))
 ```
 
 Prevent the ["garbage in, garbage out"](https://en.wikipedia.org/wiki/Garbage_in,_garbage_out#:~:text=In%20computer%20science%2C%20garbage%20in,out%20(RIRO)%20is%20used) effect.
 
 ## Input data
 
-Functions calculating statistics often require **numeric vectors** as input. 
+Functions calculating statistics most often require **numeric vectors** as input. 
 
 If you have a data frame, you may need to extract a single column.
 
@@ -172,41 +204,66 @@ mpg$displ
 mpg %>% pull(displ)
 ```
 
-## Why do we use statistical tests
-
-To show that the patterns we see in the data are not due to random fluctuations.
 
 ## Linear correlation (Pearson) 
 
 Look for a linear relationships between two variables ($x$ and $y$).
 
-Correlation coefficient ($r$).
+The typical plot for correlation analysis is a scatter plot.
 
-$$ r_{xy} = \frac{\sum_{i=1}^{n} (x_i-\bar{x})(y_i-\bar{y})} {\sqrt{ \sum_{i=1}^{n} (x_i-\bar{x})^2  \sum_{i=1}^{n} (y_i-\bar{y})^2    }}  $$
-$r$ varies from -1 to 1.
-
-## Linear correlation
-
-Let's generate random data for testing.
-
-```{r lincor,fig.width = 4, fig.height=3.5}
-n = 40
-# x = random numbers from a gaussian distribution
-x <- rnorm (n = n, mean = 0, sd = 1) 
-# x multiplied by 2 plus 50 and some gaussian noise
-y <- 2 * x + 50 + rnorm( n = n, mean = 0, sd = 2.5) 
-x[1:10] # print 10 numbers from x
-y[1:10] # print 10 numbers from y
+```{r, fig.width = 3, fig.height=2.5}
+ggplot(data=attitude)+
+  geom_point(mapping = aes(x=learning,y=complaints)) +
+  xlab("Opportunity to learn") +
+  ylab("Handing of complaints")
 ```
 
 ## Linear correlation
 
+1. We will do an example **manually**
+2. Then an example with the cor.test() function.
+3. Then you will have a go.
 
-```{r example,fig.width = 4, fig.height=3.0}
+
+## Linear correlation
+
+Let's generate data set to work with.
+
+We will do an example *manually* to remove most of the magic from it.
+
+```{r lincor,fig.width = 4, fig.height=3.5}
+n = 40
+# x = random numbers from a gaussian distribution
+x <- rnorm (n = n, mean = 0, sd = 1)
+y <- 2 * x + 50 + rnorm( n = n, mean = 0, sd = 2.0)
+df <- data.frame(x = x, y = y)
+head(df,n=5)
+```
+It is often useful when learning to work with simulated data.
+
+## Linear correlation
+
+Correlation coefficient ($r$).
+
+$$ r_{xy} = \frac{\sum_{i=1}^{n} (x_i-\bar{x})(y_i-\bar{y})} {\sqrt{ \sum_{i=1}^{n} (x_i-\bar{x})^2  \sum_{i=1}^{n} (y_i-\bar{y})^2    }}  $$
+
+$r$ varies from -1 to 1.
+
+Negative $r$ values represent negative slopes.
+
+1 or -1 is a perfect linear relationship.
+
+Values near 0 mean very poor correlations.
+
+## Linear correlation
+
+
+```{r example,fig.width = 3, fig.height=2.2}
 r_value = sum( (x-mean(x)) * (y - mean(y))) / 
   sqrt( sum((x-mean(x))^2) * sum((y-mean(y))^2))
-plot(x,y)
 print(paste("My r value:", round(r_value,2)))
+df %>% ggplot()+
+  geom_point(mapping = aes(x=x,y=y))
 ```
 
 ## Linear correlation, degrees of freedom
@@ -215,11 +272,17 @@ The number of independent values that can vary in an analysis without breaking a
 
 For a linear correlation: $df = n-2$
 
+Nowadays, I use the value of $df$ to make sure the computer is doing what I think it is doing.
+
 ## Linear correlation, p value
 
-We need to decide whether there is a significant relationship between x and y. 
+We now need to decide whether there is a significant relationship between `x` and `y`. 
 
-The p value tells you the probability of obtaining a specific r value (`r round(r_value,2)`) by chance. If it is less than 5%, we claim that there is a significan relationship between x and y.
+The $p$ value tells you the probability of obtaining a specific $r$ value (`r round(r_value,2)`) by chance. 
+
+If it is less than 5%, we claim that there is a significant relationship between x and y.
+
+Notice that you will get this wrong once every 20 attempts.
 
 ## Linear correlation, p value
 
@@ -232,19 +295,24 @@ print(paste("t:",round(t_value,4),
 ```
 
 ```{r,fig.width = 4, fig.height=3.0, echo=FALSE}
-t_val = seq(-8,8,0.1)
-plot(t_val,dt(t_val,df=n-2),type='l',ylab="Probability",xlab="t")
+t <- seq(-8,8,0.1)
+p <- dt(t,df=n-2)
+df <- data.frame(t = t, prob = p)
+df %>% ggplot +
+  geom_line(mapping = aes(x=t,y=prob))
 ```
 
 ## Example 1
 
-Now let's see how you would normally do this in R, starting from a data frame.
+We are done with manually calculating r, t and p. Let's see how you normally do this in R.
 
-First have a look at the input data
+We will use a data set (attitude) available within R.
 
-```{r example_correlation, fig.width=3,fig.height=3}
-ggplot(data=attitude)+
-  geom_point(mapping = aes(x=rating,y=complaints))
+```{r example_correlation, fig.width=3,fig.height=2.5}
+ggplot(attitude) +
+  geom_point(mapping = aes(x=learning,y=complaints)) +
+  xlab("Opportunity to learn") +
+  ylab("Handing of complaints")
 ```
 
 ## Example 1
@@ -252,7 +320,7 @@ ggplot(data=attitude)+
 All the calculation is done by `cor.test()`.
 
 ```{r cor_example}
-cor.test(attitude$rating,attitude$complaints)
+cor.test(attitude$learning,attitude$complaints)
 ```
 If p < 0.05, there is a linear relationship between the two variables.
 
@@ -261,7 +329,7 @@ If p < 0.05, there is a linear relationship between the two variables.
 You can also save the results for later use.
 
 ```{r cor_exp2}
-res <- cor.test(attitude$rating,attitude$complaints)
+res <- cor.test(attitude$learning,attitude$complaints)
 print(paste("r:", res$estimate, res$estimate^2))
 print(paste("t:",res$statistic))
 print(paste("p:",res$p.value))
@@ -297,15 +365,15 @@ Negative correlation coefficients are for negative slopes.
 
 The p value has no real meaning if the assumptions of the test are violated.
 
-Alternative: Spearman or Kendall rank correlation (method = c("pearson", "kendall", "spearman"))
+Alternative: **Spearman** or **Kendall** rank correlation (method = c("pearson", "kendall", "spearman"))
 
 
-## How can things go wrong?
+## Linear correlations: possible pitfalls
 ```{r seed2, echo=FALSE}
 set.seed(111)
 ```
 
-Non-linear relationships
+Things can go wrong with non-linear relationships
 
 ```{r nonlinear,fig.width = 4, fig.height=3}
 n=50
@@ -317,7 +385,7 @@ plot(x,y,main=paste("r:",round(res$estimate,3),
 ```
 
 
-## How can things go wrong?
+## Linear correlations: possible pitfalls
 
 Random data
 ```{r change, echo = FALSE}
@@ -331,7 +399,7 @@ plot(x,y,main=paste("r:",round(res$estimate,3),
                     ", p:",round(res$p.value,3)))
 ```
 
-## How can things go wrong?
+## Linear correlations: possible pitfalls
 
 Random data and **one outlier**
 ```{r outl2,fig.height = 3, fig.width= 4}
@@ -341,21 +409,25 @@ res <- cor.test(x,y)
 plot(x,y,main=paste("r:",round(res$estimate,3),
                     ", p:",round(res$p.value,3)))
 ```
-
+ 
 ## t-test
 
 Test if there is a difference between
 
-* the mean of one group to a known value (one-sample t test)
-* the means of **2** groups (two-sample t test)
+* the **mean** of one group to a known value (one-sample t test)
+* the **means** of **2** groups (two-sample t test)
+  * 2 independent groups
+  * 2 dependent groups
 
 Fun fact: Developed by William Sealy Gosset who worked as Head Brewer at Guinness in Dublin. He published under the pseudonym of "Student".
 
-## one-sample t test
+## One-sample t test
 
 We want to test whether some values are significantly different from a value (e.g., 0).
 
-Assumes that the data come from a normal distribution.
+More precisely, we want to know whether our data are sampled from a normal distribution with a specific mean.
+
+Assumes that the data are normally distributed.
 
 Degrees of freedom, $df = N-1$
 
@@ -363,7 +435,20 @@ Degrees of freedom, $df = N-1$
 ## One-sample t test
 
 $$ t = \frac{\bar{X} - \mu} {s/\sqrt{N}} $$
-where $\bar{X}$ is the mean of your sample, $\mu$ is the mean of the population, $s^2$ is the standard deviation of your sample.   
+where $\bar{X}$ is the mean of your sample, $\mu$ is the mean of the population, $s$ is the standard deviation of your sample. 
+
+With $t$ and your degrees of freedom, you can find the probability (p value) using the t distribution.
+
+```{r,fig.width = 3, fig.height=2.5, echo=FALSE}
+t <- seq(-8,8,0.1)
+p <- dt(t,df=n-2)
+df <- data.frame(t = t, prob = p)
+df %>% ggplot +
+  geom_line(mapping = aes(x=t,y=prob))
+```
+
+
+
 
 ## One-sample t test example
 
@@ -376,7 +461,8 @@ We obtain scores from 12 students and perform a t-test.
 Don't forget to look at your data
 
 ```{r ttest_example,fig.height = 3, fig.width= 4}
-gs <- data.frame(IQ = c(103,123,95,132,113,102,98,97,110,102,112,98)) # data entries
+# data entries
+gs <- data.frame(IQ = c(103,123,95,132,113,102,98,97,110,102,112,98)) 
 ggplot(data = gs) + 
   geom_histogram(mapping = aes(x=IQ),binwidth = 2)
 ```
@@ -394,7 +480,7 @@ shapiro.test(gs$IQ)
 
 ## One-sample t test example
 
-Perform the t test
+Use the `t.test()` function to perform the t test.
 
 ```{r ttest_example2}
 t.test(x = gs$IQ,
@@ -405,40 +491,104 @@ t.test(x = gs$IQ,
 
 ## Two-sample t test
 
-Comparing the mean in **2** groups.
+Comparing the means of **2** groups.
 
-* Two dependent groups (same cells or subjects tested twice)
 * Two independent groups (different cells or subjects)
+* Two dependent groups (same cells or subjects tested twice)
+
+
+## t test for independent samples
+
+We measure the firing rate of the two types of neurons (pyramidal cells and interneurons) and want to know if their firing rates differs.
+
+
+```{r twosamples}
+neurons <- tibble(neuronType = c(rep("pyr",8),rep("int",8)),
+  rate = c(2.5,1.4,3.2,2.5,3.4,2.5,4.6,3.0,5.2,1.7,6.2,2.7,7.8,4.9,5.6,3.2))
+head(neurons,n=5)
+```
+
+## t test for independent samples
+
+We should always plot our data. For t-tests, a boxplot is a good idea.
+
+```{r boxp, fig.height=3,fig.width=4}
+neurons %>% ggplot()+
+  geom_boxplot(mapping = aes(x = neuronType,y = rate))
+```
+
+
+## t test for independent samples
+
+Use 2 numerical vectors as inputs.
+
+```{r testindepended}
+pyr <- neurons %>% filter(neuronType=="pyr") %>% select(rate) %>% pull()
+int <- neurons %>% filter(neuronType=="int") %>% select(rate) %>% pull()
+t.test(x = pyr, y = int,
+       alternative = "two.sided", paired = FALSE)
+```
+## t test for independent samples
+
+Use the arguments `data` and `formula`. Simpler with tidy data sets.
+
+```{r testindepended2}
+t.test(formula = rate~neuronType,
+       alternative = "two.sided", paired = FALSE, data = neurons)
+```
+## t test for independent samples
+
+Assumptions
+
+*  The two distributions have the same variance
+*  The two groups are independent
+*  Normality
+
+
+`t.test()` by default will take into consideration the unequal sample size, like in our example.
+
+Alternative for data that are not normally distributed: Wilcoxon Rank Sum Tests `wilcox.test()`.
 
 
 ## t test for dependent samples
 
-We measure the firing rate of the same neurons in two conditions (t0 and t1) and want to know if the firing rate changed.
+We measure the firing rate of the **same** neurons in two conditions (t0 and t1) and want to know if the firing rate changed.
 
-```{r twosamples}
+```{r twosamples3}
 neurons <- data.frame(t0 = c(2.5,1.4,3.2,2.5,3.4,2.5,4.6,3.0),
            t1 = c(2.7,1.7,3.2,2.7,3.8,2.9,4.6,3.2))
 neurons
 ```
 
-## t test for dependent samples
+## Anything wrong with this data frame?
 
-```{r twosamples2,fig.height = 3, fig.width= 4}
-ggplot(data=neurons)+
-  geom_histogram(aes(x=t0),binwidth=0.1)+
-  geom_histogram(aes(x=t1),fill="red",alpha=0.5,binwidth=0.1)
+```{r echo = F}
+neurons
 ```
 
-Notice that are data frame is not in the best format for ggplot.
+## Anything wrong with this data frame?
+
+```{r echo = F}
+neurons
+```
+
+It has several observations per row. Harder to use ggplot.
 
 ## Reshape for ggplot
+
+Here we reshape the data set.
+
 ```{r pivot}
 neurons_long <- neurons %>%
   gather(key="condition", value = "rate", starts_with("t"))
 neurons_long
 ```
-***
-```{r neurons_long}
+
+## t test for dependent samples
+
+Now it is easier to use ggplot.
+
+```{r neurons_long, fig.height=2.5, fig.width = 3}
 ggplot(data=neurons_long)+
   geom_boxplot(mapping = aes(x = condition,y=rate))
 ```
@@ -446,35 +596,24 @@ ggplot(data=neurons_long)+
 
 ## t test for dependent samples
 
+For paired t test, you need to vectors of equal length
 ```{r dependentt}
-t.test(x = neurons$t0,
-       y = neurons$t1,
-       alternative = "two.sided",
-       paired = TRUE)
+t.test(x=neurons$t0, y=neurons$t1,
+       alternative = "two.sided", paired = TRUE)
 ```
 Significant results despite a very small effect (0.2125)
 
-## t test for independent samples
+## t test for dependent samples
 
-We measure the firing rate of different neurons in two conditions (t0 and t1) and want to know if the firing rate is different between the two conditions.
+The test works on the difference between t0 and t1.
 
-Let's use the same data as before, but this time we treat the samples as independent.
-
-## t test for independent samples
-
-Our effect is gone because there is a lot of variability in our data.
-
-```{r testindepended}
-t.test(x = neurons$t0,
-       y = neurons$t1,
-       alternative = "two.sided",
-       paired = FALSE)
+```{r paireddiff,fig.width=3,fig.height=2.5}
+df <- data.frame(pairedDiff = neurons$t0-neurons$t1)
+df %>% ggplot()+
+  geom_histogram(aes(x=pairedDiff),binwidth=0.05)
 ```
 
-
-
-## ANOVA
-
+t test for dependent samples can detect smaller difference.
 
 ## Reading for this week
 
