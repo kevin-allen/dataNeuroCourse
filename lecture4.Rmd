@@ -17,12 +17,12 @@ set.seed(114)
 ## Today's plan
 
 1. Combining information from several data frames
-2. Common statistical procedures with R
+2. Reshaping data frames
+3. Common statistical procedures with R
   + Linear correlation 
   + t-test
   + ANOVA
   + Common errors in statistics
-
 
 ## Combining information from several data frames
 
@@ -97,8 +97,46 @@ print(df_join,n=6)
 
 ## Want to know more
 
-For more information: [Relational data and dplyr](https://r4ds.had.co.nz/relational-data.html)
+[Chapter 10, Relational data and dplyr](https://r4ds.had.co.nz/relational-data.html)
 
+## Tidy dataframes
+
+The golden rules of **tidy** data frames
+
+1. Each variable must have its own column.
+2. Each observation must have its own row.
+
+Advantages
+
+1. You only need to learn how to process one type of data frame
+2. dplyr and ggplot are designed to work with tidy data.
+
+## Tidy dataframes
+
+You will eventually encounter datasets that are not tidy.
+
+What is wrong with this data frame?
+```{r tb}
+df <- tibble(country = c("Afghanistan","Brazil","China"),
+       "1999" = c(745, 37737, 80488),
+       "2000" = c(2666, 80488,213766))
+df
+```
+
+## Reshaping data frames into tidy data frames
+
+When some of the columns are not variables but values of a variable.
+
+We need to gather these colums into a new pair of variables.
+```{r gathering}
+df %>% gather('1999','2000', key = 'year', value = 'cases')
+```
+
+## Reshaping data frames into tidy data frames
+
+[Chapter 9, Tidy Data with tidyr](https://r4ds.had.co.nz/tidy-data.html)
+
+There is a good case study with tuberculosis data from the WHO.
 
 ## Common statistics with R
 
