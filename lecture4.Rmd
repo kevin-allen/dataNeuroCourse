@@ -1,7 +1,7 @@
 ---
 title: "Data science and analysis in Neuroscience"
 author: "Kevin Allen"
-date: "December 4, 2020"
+date: "December 3, 2020"
 output:
   ioslides_presentation: default
 ---
@@ -38,7 +38,7 @@ print(df,n=5)
 
 ## Combining information from several data frames
 
-In most project, you need to work with several tables. 
+In most projects, you need to work with several tables. 
 
 Relations are defined between a pair of tables.
 
@@ -87,7 +87,7 @@ df %>%
 
 ## Mutating joins
 
-* It first matches observation by their keys.
+* It first matches observations by their keys.
 * Then copies across variables from one table to the other.
 
 ```{r relational5}
@@ -114,7 +114,7 @@ Advantages
 
 ## Tidy dataframes
 
-You will eventually encounter datasets that are not tidy.
+You will eventually encounter data sets that are not tidy.
 
 What is wrong with this data frame?
 ```{r tb}
@@ -137,7 +137,7 @@ Year is a variable. 1999 and 2000 are values of the variable year.
 
 ## Reshaping data frames into tidy data frames
 
-We need to gather these colums into a new pair of variables.
+We need to gather these columns into a new pair of variables.
 ```{r gathering}
 df %>% gather('1999','2000', key = 'year', value = 'cases')
 ```
@@ -148,15 +148,14 @@ Now you can use `dplyr::group_by` and `dplyr::summarize` for example
 
 [Chapter 9, Tidy Data with tidyr](https://r4ds.had.co.nz/tidy-data.html)
 
-There is a example with a dataset from the World Health Organisation.
+There is a example with a data set from the World Health Organization.
 
 
 ## Common statistics with R
 
 1. Linear correlation 
 2. t-test
-3. ANOVAs
-4. Common errors in statistics
+3. Common errors in statistics
 
 ## Why do we need statistical tests
 
@@ -263,7 +262,8 @@ r_value = sum( (x-mean(x)) * (y - mean(y))) /
   sqrt( sum((x-mean(x))^2) * sum((y-mean(y))^2))
 print(paste("My r value:", round(r_value,2)))
 df %>% ggplot()+
-  geom_point(mapping = aes(x=x,y=y))
+  geom_point(mapping = aes(x=x,y=y))+
+  geom_smooth(mapping = aes(x=x,y=y),method = "lm",alpha=0.2)
 ```
 
 ## Linear correlation, degrees of freedom
@@ -619,6 +619,6 @@ t test for dependent samples can detect smaller difference.
 
 [Ten common statistical mistakes (eLife, 2019)](https://elifesciences.org/articles/48175?gclid=Cj0KCQiAwf39BRCCARIsALXWETyV3Dhu7jGevlenU1oh2zzLo812jOvAeparT0UYPEY9hPOFI34ECUQaAkBEEALw_wcB)
 
-This article covers the most common statistical mistakes done by scientists. They are very common. 
+This article covers the most common statistical mistakes made by scientists. They are very common. 
 
 Learn to detect them and eliminate them from your work.
