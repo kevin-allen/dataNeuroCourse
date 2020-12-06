@@ -1,7 +1,7 @@
 ---
 title: "Data science and analysis in Neuroscience"
 author: "Kevin Allen"
-date: "December 12, 2019"
+date: "December 10, 2020"
 output:
   ioslides_presentation: default
   beamer_presentation: default
@@ -10,46 +10,53 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(global.par = TRUE)
 library(tidyverse)
 library(knitr)
 ```
 
 ## A brief introduction to machine learning
 
-1. Definition
-2. Prediction versus inference
-3. Supervised versus unsupervised
-4. Regression versus classification
-5. Instance-based versus model-based learning
-7. Trainind and testing set
-8. Quizz!
-8. Linear regression
-9. Classification
-6. Challenges
+1. Why should you learn about machine learning
+2. Definition
+4. Prediction versus inference
+5. Supervised versus unsupervised
+6. Regression versus classification
+7. Instance-based versus model-based learning
+8. Trainind and testing set
+9. Quizz!
+10. Example of learning loop with a linear regression
 
 ## Objective
 
-The aim is to understand what machine learning is and experiment with a few examples. 
+Our aim in the course is to understand what machine learning is and experiment with a few examples. 
 
+## Why should you learn about machine learning
+
+It provides very useful new tools to scientists.
+
+* Track animals in a video, ([Deeplabcut](http://www.mousemotorlab.org/deeplabcut))
+* Image segmentation of biological images, ([U-net](https://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/))
+* Clustering of spike waveforms ([Kilosort](https://github.com/MouseLand/Kilosort))
+* 3D structure of proteins ([alphafold2](https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology))
+
+Saves time, improve performance and makes new experiments possible.
 
 ## Definition of machine learning
 
-Machine learning is the field of study that gives computer the ability to learn without being explicitely programmed.
+Machine learning is the field of study that gives computer the ability to learn without being explicitly programmed.
 
 -- Arthur Samuel, 1959
 
-A computer program is said to learn from experience E with respect to some task T and some performance measure P, if its performance on T, as measured by P, improves with experience E. 
+The computer learns from **input data** to achieve a specific objective.
 
--- Tom Mitchell, 1997
-
-Examples : A program learns to decide whether an email is spam or not based on training set. 
+Examples : A program learns to decide whether an email is spam or not based on training data. 
 
 ## Definition of machine learning
 
-
-* $p$ different inputs (predictors): $X_{1}, X_{2}, X_{3},...,X_{p}$
-* Response: $Y$
-* Unknown function: $f()$
+* Input: $X$ (can be single number or a matrix)
+* Output: $Y$ (can be a single number or a matrix)
+* Unknown function or model: $f()$
 * Random error: $\epsilon$
 
 <center>
@@ -57,8 +64,34 @@ $Y = f(X) + \epsilon$
 </center>
 
 <br>
-Machine learning refers to a set of approaches for estimating $f$.
 
+Machine learning refers to a set of approaches for estimating the best parameters in $f$.
+
+$f$ can be the equation of a line, a deep neural network, etc. It is your **model**.
+
+## What is learning
+
+Learning can be defined as finding the best model parameters to solve a problems.
+
+**Simple example**: Find the relationship between IQ and education with a linear regression model.
+
+$$y = a*x + b $$
+**Complex example**: Identify a mouse in an image.
+```{r, echo=FALSE,out.width = "400px"}
+knitr::include_graphics("images/deep-neural-network.png")
+```
+
+## What is learning
+
+You can apply similar learning procedures for simple and complex models.
+
+Learning loop
+
+0. Start with random model parameters
+1. Feed data with label to your model
+2. Calculate the error of your model (loss).
+3. Adjust the model parameters to reduce the error.
+4. Go back to 1.
 
 ## Prediction versus inference
 
@@ -77,17 +110,16 @@ $\hat Y = \hat f(X)$
 * Which predictors are associated with the response?
 * Is the relation between $Y$ and each predictor adequately summarized using a linear equation?
 
-
 ## Supervised versus unsupervised versus reinforcement learning
 
 ### Supervised
-* The training set contains labelled data.
+* The training set contains labeled data.
 * For each observation of the predictors $X_{i}, i = 1,...,n$ there is a known response measurement $y_{i}$.
 * Example: linear regression
 
 ### Unsupervised
-* Uncovering hidden patterns from unlabelled data.
-* For each observation $i = 1,...,n$, we observed a vector of measurments $X_{i}$, but no response $y_{i}$.
+* Uncovering hidden patterns from unlabeled data.
+* For each observation $i = 1,...,n$, we observed a vector of measurements $X_{i}$, but no response $y_{i}$.
 * Example: cluster analysis
 
 ## Regression versus classification
@@ -109,209 +141,294 @@ or
 
 https://tinyurl.com/s6gxeuo
 
-## Our task
 
-The mice performing rewarded alternation on the t-maze appeared to have improved their performance across the training blocks. Can we estimate how much they improved between each block?
+## How does learning takes place?
 
-```{r load}
-myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv" 
-df<-read_csv(myFile)
-df<-mutate(df, correct = sample != choice)
+Often an iterative process.
 
-df1 <- df %>% 
-  group_by(mouse,block) %>% 
-  summarise(performance = 100 * mean(correct))
+1. Feed data with label to your model
+2. Calculate the error (loss).
+3. Adjust the model parameters to minimize the loss.
+4. Go back to 1.
+
+
+## Our task: 
+
+Write a learning loop to find the best parameters for a linear regression model.
+
+We have bought a new thermometer for the lab but it does not show the units. 
+We have an old thermometer that measure temperature in Celsius.
+To understand the output of the new thermometer, we record pairs of readings from the old and new thermometers.
+
+```{r data}
+tc <- c(0.5, 14.0, 15.0, 28.0, 11.0, 8.0, 3.0, -4.0, 6.0, 13.0, 21.0)
+tu <- c(35.7, 55.9, 58.2, 81.9, 56.3, 48.9, 33.9, 21.8, 48.4, 60.4, 68.4)
+df <- data.frame(tc = tc,
+           tu = tu)
 ```
 
-## Our data
+## Always plot the data first
 
-```{r ourData,fig.width = 5, fig.height = 3}
-df1 %>% 
-  ggplot(mapping = aes(x=block,y=performance)) +
-  geom_point(position="jitter")
+```{r plotfirst, fig.width=4, fig.height=3}
+df %>% ggplot()+
+  geom_point(mapping = aes(x = tc, y = tu))
 ```
 
-What analysis could we do to estimate the rate of improvment in performance?
+## Note
 
-## Linear regression
+There are easier ways (e.g. `lm`) to solve our problem but we want to learn what machine learning is.
 
-* A line as a model for our data.
-* $Y = aX + b$
-* $Y$: target
-* $X$: features (inputs)
-* $a$ and $b$ are parameters of the model.
-* $a$ is the slope and $b$ is the intercept.
-* The task is to find the best $a$ and $b$.
-* Define an error or loss function to assess any possible line ($a$ and $b$).
-* Find the line ($a$ and $b$) that minimize the error function.
+## Choosing a model to solve our problem
+
+The scatter plot looks like ther is a linear relationship.
+
+What transformation do we need to do to $t_u$ to get $t_c$
+
+```{r model}
+model <- function(tu, params){
+  return(params[1] * tu + params[2])
+}
+```
+
+$w$ and $b$ are for weight and bias
+
+They are the slope and intercept in this case.
+
+Our task is to find the best value of $w$ and $b$.
+
+## Measuring the error of our model
+
+To improve our model by changing the parameters, we need a measure of error.
+
+This is called a **loss function**
+
+We compare the prediction of the model to the known label.
+
+```{r loss}
+loss_fn <- function(y,y_pred){
+  squared_diffs = (y-y_pred)^2
+  return(squared_diffs)
+}
+plot(seq(-6,6,0.1),loss_fn(seq(-6,6,0.1),0),ylab="loss",xlab="y-y_pred")
+```
+Our aim is to adjust the parameters ($w$ and $b$) to minimize the loss function.
+
+## Loss function
+
+We want our loss function to return one value when we pass several pairs of number as input.
+
+We will output the mean of the squared difference
+```{r loss2}
+loss_fn <- function(y,y_pred){
+  squared_diffs = (y-y_pred)^2
+  return(mean(squared_diffs))
+}
+loss_fn(seq(-6,6,0.1),0)
+```
+
+## Let's try out our model and loss function
+
+```{r model_loss}
+params <- c(1.0,0.0)
+tp <- model(tu,params)
+print("predicted temperatures:")
+tp
+loss <- loss_fn(tp,tc)
+print(paste("loss:",loss))
+```
+## How do we adjust w and b to reduce the loss?
+
+We could test many random values for $w$ and $b$ and find the combination with the lowest loss.
+This solution will not scale well to models with millions of parameters.
+
+A better approach is called **gradient descent**. 
+
+* Compute the rate of change of the loss with respect to each parameter.
+* Modify each parameter in the direction of decreasing loss.
+
+## Rate of change of the loss relative to w
+
+```{r par,echo=F}
+par(bty = 'n', mar=c(4,4,1,0.1), mgp=c(2,1,0)) 
+```
+
+Let's calculate the loss for different values of w, while keeping b fixed.
+
+```{r w_ratechange,fig.height=2.5,fig.width = 3}
+ws <- seq(-3,3,0.1)
+get_loss <- function(w, model, params, tu, tc){
+  params[1] <- w
+  return(loss_fn(model(tu,params),tc))
+}
+all_losses<-unlist(lapply(ws,get_loss,model,params,tu,tc))
+plot(ws,all_losses)
+```
+
+## Derivative of the loss with respect to a parameter
+
+The rate of change of the loss is the derivative of the loss with respect to a parameter.
+
+The package called `torch` can calculate the derivative for you.
+
+Torch is a c library that can calculate gradients. 
+
+```{r torch}
+library(torch)
+```
+
+##  Derivative of the loss with respect to a parameter
+
+We need to create torch tensor (vector) with the argument `requires_grad = TRUE`.
+
+```{r torch1}
+params <- torch_tensor(c(1.0,0.0), requires_grad = TRUE)
+params
+class(params)
+```
+## Derivative of the loss with respect to a parameter
+
+We need to slightly modify our loss function to work with torch_tensor
+```{r adjustloss}
+loss_fn <- function(y,y_pred){
+  squared_diffs = (y-y_pred)^2
+  return(squared_diffs$mean()) # mean is then with $ sign
+}
+```
+
+## Derivative of the loss with respect to a parameter
+
+```{r torch2}
+
+loss <- loss_fn(model(tu,params),tc)
+loss$backward() # calculate the gradients
+params$grad
+```
+## Adjust our parameters
+
+```{r adjust}
+print(params)
+learning_rate <- 0.0001
+ with_no_grad({
+params$sub_(learning_rate * params$grad)
+})
+params$grad$zero_()
+```
+
+## Training loop
+
+```{r trainingLoop}
+trainingLoop <- function(n_epochs=10,learning_rate=0.0001,model,params,tu,tc){
+  all_loss <- vector(length=n_epochs)
+  for (epoch in seq(1,n_epochs)){
+   tp <- model(tu,params) # predict
+   loss <- loss_fn(tp,tc) # loss
+   loss$backward() # calculate the gradients
+   # adjust parameters
+   with_no_grad({
+      params$sub_(learning_rate * params$grad)
+   })
+   # print info 
+   if(epoch < 3 | epoch > n_epochs - 2)
+    print_training_info(epoch, n_epochs, loss, params)
+   # reset the gradients to 0.
+   params$grad$zero_()
+   # save loss
+   all_loss[epoch] <- as_array(loss)
+  }
+  return(all_loss)
+}
+```
+
+## Printing information in our loop
+
+```{r defprint}
+print_training_info <- function(epoch, n_epochs,loss, params){
+  loss_r <- round(as_array(loss),3)
+  params_r <- round(as_array(params),3)
+  grads_r <- round(as_array(params$grad),3)
+  
+  print(paste("Epoch:", epoch, "of", n_epochs , ", Loss:", loss_r))
+  print(paste("Gradients:", grads_r[1], grads_r[2], " Parameters:", params_r[1],params_r[2]))
+}
+```
+
+
+
+## Train the model
+
+```{r training}
+params <- torch_tensor(c(1.0,0.0), requires_grad = TRUE)
+losses <- trainingLoop(n_epochs = 10, learning_rate = 0.0001,model=model, params=params, tu = tu,tc=tc)
+losses
+```
+## Normalizing our input data
+
+The gradients had a very different magnitude.
+
+When using gradient descent, it is usually a good idea to normalize our input data.
+
+```{r norm}
+summary(tu)
+tun <- tu * 0.1
+summary(tun)
+```
+## Training with normalize data
+
+```{r trainnorm,cache=F}
+params <- torch_tensor(c(1.0,0.0), requires_grad = TRUE)
+losses <- trainingLoop(n_epochs = 100, learning_rate = 0.01,model=model, params=params, tu = tun,tc=tc)
+```
+## Plot the losses
+
+```{r plotlosses}
+plot(losses,type="l",xlab="epoch",ylab="loss")
+```
+
+
+## Training for 3000 epochs
+
+```{r trainnorm1, cache=F}
+params <- torch_tensor(c(1.0,0.0), requires_grad = TRUE)
+losses <- trainingLoop(n_epochs = 3000, learning_rate = 0.01,model=model, params=params, tu = tun,tc=tc)
+```
+Expected parameters: `w = 5.5556` and `b = -17.7778`. Not bad!
+
+## Plot the losses
+
+```{r plotlosses}
+plot(losses,type="l",xlab="epoch",ylab="loss")
+```
+
+## Plot our new model
+
+```{r plotmodel}
+df2 <- df
+df2$tp <- as_array(model(tun,params)) 
+
+ggplot(data=df2)+
+  geom_point(mapping = aes(x = tu, y = tc))+
+  geom_point(mapping = aes(x = tu, y = tp),color = "red")+
+  geom_smooth(mapping = aes(x= tu, y = tc), method="lm") +
+  xlab("Fahrenheit")+
+  ylab("Celcius")
+
+```
+
+
 
 ## Linear regression
 
 * In real life, use the function `lm()` to find the regression line (best fit). 
 
-* But not today. 
-
-* To better understand how machine learning works, we will do it step-by-step.
-
-## Example of a line
-
-```{r line, fig.width = 3,fig.height = 3}
-a=2 # slope
-b=5 # intercept
-X=seq(from = 0, to = 35, by = 1) # some input values in X
-df<-data.frame(X = X, Y = X * a + b) # our line formula
-df %>% ggplot(mapping=aes(x=X,y=Y)) +
-  geom_line() +
-  xlim(0,80) +
-  ylim(0,80) 
-  
-```
-
-## Which line is the best fit for our data?
-
-```{r lines, fig.width = 3, fig.height = 2}
-set.seed(30)
-models<-tibble( # create a data frame with 1000 random lines
-  a = runif(n = 1000, min = -2, max = 5), # slope
-  b = runif(n = 1000, min = 40, max = 70) # intercept
-)
-ggplot()+
-  geom_point(mapping=aes(x=block,y=performance),position="jitter", data=df1)+
-  geom_abline(mapping=aes(intercept=b, slope=a), alpha=0.1, data=models)+
-  xlim(0,14)+
-  ylim(20,105)
-```
-
-Many of our models are pretty bad!
-
-## Cost (loss) function
-
-* Based on residuals.
-* Residuals: difference between the observed value and the predicted value (line).
-* Often used: Sum of the squares of residuals
-* Find the line which minimise the loss function
-
-```{r lm,echo=FALSE,fig.width = 6, fig.height = 3}
-dm<-df1
-# add a bit of noise to block so that the points are not on top of each other
-dm$block<-dm$block + runif(n = length(df1$block), min = -0.5, max = 0.5)
-# fit a linear model to the data
-fit<-lm(performance~block,data = dm)
-# get predicted values and residuals
-dm$predicted<-predict(fit)
-dm$residuals<-residuals(fit)
-# plot 
-ggplot(data=dm, mapping = aes(x=block,y=performance))+
-  geom_segment(aes(xend = block, yend = predicted),alpha = 0.2) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE, color = "red")
-```
-
-
-## Cost function
-
-Let's write a function that will give us the predictions of a model.
-
-```{r prediction}
-# define a function
-one_model_predictions<-function(a, b, data){ 
-  # parameters are a and b
-  # data should be our input X
-  a * data$block  + b # y = a * x + b
-}
-
-# prediction of the model y = 5 * x + 50
-one_model_predictions(a=5, b=50, data=df1)
-```
-
-## Cost function
-
-Calculate the difference between the actual and predicted y values. Return residual sum of squares (RSS).
-
-```{r difference}
-measure_distance <- function(a, b, data){
-  diff <- data$performance - one_model_predictions(a, b,data)
-  sum(diff^2)
-}
-
-dist <- measure_distance(a=5, b=50, data=df1)
-print(paste("Residual sum of squares: ",dist))
-```
-
-## Best fitting lines
-
-Measure the distance between the prediction of all models and the observed performance
-
-```{r distance_all}
-models <- models %>%
-  mutate(dist = purrr::map2_dbl(a,b,measure_distance,df1))
-# purrr::map2_dbl() calls measure_distance for each row of models
-head(models,n=5)
-```
-
-## Best fitting lines
-
-Which model is the best fit?
-
-```{r best_fit}
-models %>% 
-  filter(rank(dist)<=8) %>% 
-  arrange(dist)
-```
-
-## Best fitting line
-
-```{r best_fit2, fig.width = 3, fig.height = 2}
-ggplot() +
-  geom_point(mapping=aes(x=block,y=performance),position="jitter", 
-             data=df1) +
-  geom_abline(mapping=aes(intercept=b, slope=a), alpha=0.1, 
-              data=filter(models,rank(dist)<=8)) +
-  xlim(0,14) +
-  ylim(20,105)
-```
-
-This is way better!
-
-## Our parameter search
-
-Our machine learning algorithm found the best fits.
-
-```{r best_fit3, fig.width = 3, fig.height = 2}
-ggplot(data=models, mapping = aes(x=a,y=b)) +
-  geom_point(aes(color=-dist),alpha=0.2) +
-  geom_point(data=filter(models,rank(dist)<=10),color="red") +
-  geom_point(data=filter(models,rank(dist)<=1),color="blue") 
-```
 
 ## Compare our results to lm()
 
 ```{r best_fit4}
-models %>% 
-  filter(rank(dist)==1)
-myFittedModel<-lm(performance~block, data=df1)
+myFittedModel<-lm(tc~tun, data=df)
 myFittedModel
 ```
+Use `summary(myFittedModel)` to know if the model is significant. 
 
-## lm()
-
-```{r summary}
-summary(myFittedModel)
-```
-
-
-## Compare our results to lm()
-
-```{r compare,fig.width = 3, fig.height = 3}
-ggplot(data=df1,mapping=aes(x=block,y=performance)) +
-  geom_point(position="jitter") +
-  geom_smooth(method = "lm", se = FALSE, color = "red") +
-  geom_abline(mapping = aes(slope=a,intercept = b),data=filter(models,rank(dist)==1))
-```
-
-Impressively close! Would be closer with a better samples of lines.
-
-## For more on machine learning
 
 ### Online courses
 
@@ -319,9 +436,13 @@ Impressively close! Would be closer with a better samples of lines.
 
 ### Good books
 
-* [An Introduction to Statistical Learning: With Applications in R](https://www.academia.edu/36691506/An_Introduction_to_Statistical_Learning_Springer_Texts_in_Statistics_An_Introduction_to_Statistical_Learning) 
+* [Deep Learning with PyTorch](https://pytorch.org/assets/deep-learning/Deep-Learning-with-PyTorch.pdf)
 
 * [Hands-On Machine Learning with Scikit-Learn and TensorFlow](https://www.amazon.de/Hands-Machine-Learning-Scikit-Learn-TensorFlow/dp/1491962291)
+
+* [An Introduction to Statistical Learning: With Applications in R](https://www.academia.edu/36691506/An_Introduction_to_Statistical_Learning_Springer_Texts_in_Statistics_An_Introduction_to_Statistical_Learning) 
+
+* [Deep Learning for Coders with fastai and PyTorch](https://www.fast.ai/)
 
 ## For next week
 
