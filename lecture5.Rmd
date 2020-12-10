@@ -430,9 +430,20 @@ myFittedModel
 Use `summary(myFittedModel)` to know if the model is significant. 
 
 
-### Online courses
+### Best libraries for machine learning
 
-* [Datacamp](https://www.datacamp.com/)
+This is where python has the upper hand on R.
+
+* Scikit-Learn (python, no deep neural networks)
+* PyTorch (python, deep neural network)
+* TensorFlow (python, deep neural network)
+
+But R is catching up.
+
+* caret package
+* reticulate package
+* torch package
+* [datacamp](https://www.datacamp.com/tracks/machine-learning-scientist-with-r)
 
 ### Good books
 
