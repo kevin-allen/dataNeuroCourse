@@ -562,8 +562,6 @@ myFittedModel
 ```
 Use `summary(myFittedModel)` to know if the model is significant. 
 
-## 
-
 
 
 ## Online courses
