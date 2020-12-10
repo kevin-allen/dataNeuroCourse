@@ -24,18 +24,18 @@ library(knitr)
 6. Regression versus classification
 7. Instance-based versus model-based learning
 8. Trainind and testing set
-9. Quizz!
+9. **Quizz!**
 10. Example of learning loop with a linear regression
 
 ## Objective
 
 Our aim in the course is to understand what machine learning is and experiment with a few examples. 
 
-## Why should you learn about machine learning
+## Why should you care about machine learning
 
-It provides very useful new tools to scientists.
+It provides very useful tools to scientists.
 
-* Track animals in a video, ([Deeplabcut](http://www.mousemotorlab.org/deeplabcut))
+* Track animal pose in a video, ([Deeplabcut](http://www.mousemotorlab.org/deeplabcut))
 * Image segmentation of biological images, ([U-net](https://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/))
 * Clustering of spike waveforms ([Kilosort](https://github.com/MouseLand/Kilosort))
 * 3D structure of proteins ([alphafold2](https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology))
@@ -69,28 +69,29 @@ Machine learning refers to a set of approaches for estimating the best parameter
 
 $f$ can be the equation of a line, a deep neural network, etc. It is your **model**.
 
-## What is learning
+## What is learning?
 
 Learning can be defined as finding the best model parameters to solve a problems.
 
-**Simple example**: Find the relationship between IQ and education with a linear regression model.
+**Simple example**: Find the relationship between IQ and education with a linear regression model. Two parameters.
 
-$$y = a*x + b $$
-**Complex example**: Identify a mouse in an image.
-```{r, echo=FALSE,out.width = "400px"}
+$$y = a*x + b $$ 
+**Complex example**: Find a mouse in an image. Millions of parameters.
+
+```{r, echo=FALSE,out.width = "350px"}
 knitr::include_graphics("images/deep-neural-network.png")
 ```
 
-## What is learning
+## What is learning?
 
-You can apply similar learning procedures for simple and complex models.
+It is often possible to apply similar learning procedures for simple and complex models.
 
-Learning loop
+**Learning** or **training** loop
 
 0. Start with random model parameters
 1. Feed data with label to your model
 2. Calculate the error of your model (loss).
-3. Adjust the model parameters to reduce the error.
+3. Adjust the model parameters by a small amount to reduce the error.
 4. Go back to 1.
 
 ## Prediction versus inference
@@ -98,15 +99,15 @@ Learning loop
 Why do we want to estimate $f$?
 
 <center>
-$\hat Y = \hat f(X)$
+$Y = f(X)$
 </center>
 
 ### Prediction
-* We focus on predicting $Y$ ($\hat Y$).
-* $\hat f$ is treated as a black box.
+* We focus on predicting $Y$.
+* $f$ is treated as a black box (a useful black box)
 
 ### Inference
-* Understand how $Y$ is affected as $X_{1},..., X_{p}$ changes.
+* **Understand** how $Y$ is affected as $X$ changes.
 * Which predictors are associated with the response?
 * Is the relation between $Y$ and each predictor adequately summarized using a linear equation?
 
@@ -133,24 +134,29 @@ A **training set** is our observed data points that is used to estimate $f$. Our
 
 A **test set** is used to test how accurate our model is. Not used for training!
 
+Keeping data aside to test how well you model work is essential when using complex models. 
+
+Complex models can learn to perform great on your training set but generalize very poorly to new data. This is called **overfitting**.
+
+
 ## Time for a quizz!
 
-[Link](https://docs.google.com/forms/d/e/1FAIpQLSfntZwHpHmieJFatBJrEd7wFLj3oS1-84WDZNXhdC45lQ6QAw/viewform?usp=sf_link)
+[Link](https://docs.google.com/forms/d/e/1FAIpQLSfmL_igF1P0sZ_6aorGTE71pwNEa34oSWklG34y5vMPXvEYTQ/viewform?usp=sf_link)
 
 or
 
-https://tinyurl.com/s6gxeuo
+https://tinyurl.com/y3jhxgr6
 
+You have 5 minutes to complete the questions.
 
-## How does learning takes place?
+## How do computers learn?
 
-Often an iterative process.
+Often using an iterative process (i.e. a loop).
 
-1. Feed data with label to your model
+1. Feed data to your model
 2. Calculate the error (loss).
-3. Adjust the model parameters to minimize the loss.
+3. Adjust the model parameters by a small amount to minimize the loss.
 4. Go back to 1.
-
 
 ## Our task: 
 
@@ -167,26 +173,35 @@ df <- data.frame(tc = tc,
            tu = tu)
 ```
 
+Write and run the code as we go!
+
 ## Always plot the data first
 
 ```{r plotfirst, fig.width=4, fig.height=3}
 df %>% ggplot()+
-  geom_point(mapping = aes(x = tc, y = tu))
+  geom_point(mapping = aes(x = tu, y = tc))
 ```
+
+When we use our new thermometer, we want to know what would the value be in Celsius.
+
 
 ## Note
 
-There are easier ways (e.g. `lm`) to solve our problem but we want to learn what machine learning is.
+There are easier ways with R to solve this problem (e.g. `lm`). 
+
+Today we focus on how computers can estimate the best parameters in a model.
 
 ## Choosing a model to solve our problem
 
-The scatter plot looks like ther is a linear relationship.
+The scatter plot suggests that there is a linear relationship.
 
-What transformation do we need to do to $t_u$ to get $t_c$
+What transformation do we need to do to go from $t_u$ to $t_c$?
 
 ```{r model}
 model <- function(tu, params){
-  return(params[1] * tu + params[2])
+  w = params[1]
+  b = params[2]
+  return(w * tu + b)
 }
 ```
 
@@ -196,26 +211,71 @@ They are the slope and intercept in this case.
 
 Our task is to find the best value of $w$ and $b$.
 
+## Using our model
+
+Our model returns predictions.
+
+```{r use_model}
+params <- c(1.0,0.0) # set arbitrary parameter values
+model(tu,params) # make predictions
+tc # real values
+```
+
 ## Measuring the error of our model
 
-To improve our model by changing the parameters, we need a measure of error.
+To improve our model, we need to estimate the error in the prediction of our model.
 
-This is called a **loss function**
+This is called a **loss function**.
 
-We compare the prediction of the model to the known label.
+We usually compare the prediction of the model to the known label.
+
+## Loss function
+
+For linear regressions, we usually use the sum of the squared difference between the predicted and observed values.
+
+```{r lm,echo=FALSE,fig.width = 6, fig.height = 4.5}
+dm<-df
+# fit a linear model to the data
+fit<-lm(tc~tu, data = dm)
+# get predicted values and residuals
+dm$predicted<-predict(fit)
+dm$residuals<-residuals(fit)
+# plot 
+ggplot(data=dm, mapping = aes(x=tu,y=tc))+
+  geom_segment(aes(xend = tu, yend = predicted),alpha = 0.2) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") 
+```
+
+## Loss function
+
+Let's write our loss function.
 
 ```{r loss}
 loss_fn <- function(y,y_pred){
   squared_diffs = (y-y_pred)^2
   return(squared_diffs)
 }
-plot(seq(-6,6,0.1),loss_fn(seq(-6,6,0.1),0),ylab="loss",xlab="y-y_pred")
 ```
-Our aim is to adjust the parameters ($w$ and $b$) to minimize the loss function.
 
 ## Loss function
 
-We want our loss function to return one value when we pass several pairs of number as input.
+The loss increases exponentially as the difference between the predicted and observed value increases. This penalizes large prediction errors.
+
+```{r plotloss, fig.width = 4, fig.height = 2.5}
+data.frame(predicted = seq(-10,10,0.1),
+          observed = 0) %>% 
+  ggplot(mapping = aes(x =predicted-observed,
+                       y = loss_fn(predicted,observed)))+
+  geom_point()
+```
+## Loss function
+
+We need to find the model parameters ($w$ and $b$) to minimize the loss function.
+
+## Loss function
+
+We need to adjust our loss function to return one value when we pass several pairs of number as input.
 
 We will output the mean of the squared difference
 ```{r loss2}
@@ -226,13 +286,14 @@ loss_fn <- function(y,y_pred){
 loss_fn(seq(-6,6,0.1),0)
 ```
 
-## Let's try out our model and loss function
+
+## Predictions and loss calculation
 
 ```{r model_loss}
+tu # new thermometer values
 params <- c(1.0,0.0)
 tp <- model(tu,params)
-print("predicted temperatures:")
-tp
+tp # model prediction
 loss <- loss_fn(tp,tc)
 print(paste("loss:",loss))
 ```
@@ -241,9 +302,9 @@ print(paste("loss:",loss))
 We could test many random values for $w$ and $b$ and find the combination with the lowest loss.
 This solution will not scale well to models with millions of parameters.
 
-A better approach is called **gradient descent**. 
+A more efficient approach is called **gradient descent**. 
 
-* Compute the rate of change of the loss with respect to each parameter.
+* Calculate the rate of change of the loss with respect to each parameter.
 * Modify each parameter in the direction of decreasing loss.
 
 ## Rate of change of the loss relative to w
@@ -252,17 +313,23 @@ A better approach is called **gradient descent**.
 par(bty = 'n', mar=c(4,4,1,0.1), mgp=c(2,1,0)) 
 ```
 
-Let's calculate the loss for different values of w, while keeping b fixed.
+Here is the loss for different values of $w$, while keeping $b$ at `r params[2]`.
 
-```{r w_ratechange,fig.height=2.5,fig.width = 3}
+```{r w_ratechange, echo = FALSE, fig.width = 3, fig.height = 3}
 ws <- seq(-3,3,0.1)
 get_loss <- function(w, model, params, tu, tc){
   params[1] <- w
   return(loss_fn(model(tu,params),tc))
 }
 all_losses<-unlist(lapply(ws,get_loss,model,params,tu,tc))
-plot(ws,all_losses)
+data.frame(w = ws,
+           loss = all_losses) %>% 
+  ggplot(mapping = aes(x = w, y = loss))+
+  geom_point()
 ```
+
+We want adjust $w$ in steps so that we end up at the lowest point. 
+
 
 ## Derivative of the loss with respect to a parameter
 
@@ -298,46 +365,86 @@ loss_fn <- function(y,y_pred){
 ## Derivative of the loss with respect to a parameter
 
 ```{r torch2}
-
 loss <- loss_fn(model(tu,params),tc)
 loss$backward() # calculate the gradients
 params$grad
 ```
+
 ## Adjust our parameters
 
-```{r adjust}
-print(params)
-learning_rate <- 0.0001
- with_no_grad({
+```{r adjust, results=F}
+print(params) # print parameters
+
+learning_rate <- 0.0001 # determine the size of the adjustment
+ 
+with_no_grad({ # update the parameters
 params$sub_(learning_rate * params$grad)
 })
-params$grad$zero_()
+
+params$grad$zero_() # reset the gradients to 0
 ```
 
-## Training loop
+
+## Training loop (minimal)
+
 
 ```{r trainingLoop}
-trainingLoop <- function(n_epochs=10,learning_rate=0.0001,model,params,tu,tc){
-  all_loss <- vector(length=n_epochs)
+trainingLoop <- function(n_epochs=10,learning_rate=0.0001
+                         ,model,params,tu,tc){
+  for (epoch in seq(1,n_epochs)){ # loop
+   
+   tp <- model(tu,params) # predict
+   
+   loss <- loss_fn(tp,tc) # loss
+   
+   loss$backward() # calculate the gradients
+
+   with_no_grad({   # adjust parameters
+      params$sub_(learning_rate * params$grad)
+   })
+   
+   params$grad$zero_() # reset to 0.
+  } # end of the loop
+  
+  return()
+}
+```
+
+
+
+## Train the model (minimal)
+
+```{r training}
+params <- torch_tensor(c(1.0,0.0), requires_grad = TRUE)
+trainingLoop(n_epochs = 10, learning_rate = 0.0001,model=model, params=params, tu = tu,tc=tc)
+params
+```
+
+
+## Training loop (with output information)
+
+```{r trainingLoop1}
+trainingLoop <- function(n_epochs=10,learning_rate=0.0001
+                         ,model,params,tu,tc){
+  all_losses <- vector(length = n_epochs)
   for (epoch in seq(1,n_epochs)){
    tp <- model(tu,params) # predict
    loss <- loss_fn(tp,tc) # loss
    loss$backward() # calculate the gradients
-   # adjust parameters
-   with_no_grad({
+
+   with_no_grad({   # adjust parameters
       params$sub_(learning_rate * params$grad)
    })
-   # print info 
-   if(epoch < 3 | epoch > n_epochs - 2)
+   
+   if(epoch < 3 | epoch > n_epochs - 2) # print info 
     print_training_info(epoch, n_epochs, loss, params)
-   # reset the gradients to 0.
-   params$grad$zero_()
-   # save loss
-   all_loss[epoch] <- as_array(loss)
+   params$grad$zero_() # reset to 0.
+   all_losses[epoch] <- as.array(loss)
   }
-  return(all_loss)
+  return(all_losses)
 }
 ```
+
 
 ## Printing information in our loop
 
@@ -348,17 +455,17 @@ print_training_info <- function(epoch, n_epochs,loss, params){
   grads_r <- round(as_array(params$grad),3)
   
   print(paste("Epoch:", epoch, "of", n_epochs , ", Loss:", loss_r))
-  print(paste("Gradients:", grads_r[1], grads_r[2], " Parameters:", params_r[1],params_r[2]))
+  print(paste("Gradients:", grads_r[1], grads_r[2], 
+              " Parameters:", params_r[1],params_r[2]))
 }
 ```
 
-
-
 ## Train the model
 
-```{r training}
+```{r training1}
 params <- torch_tensor(c(1.0,0.0), requires_grad = TRUE)
-losses <- trainingLoop(n_epochs = 10, learning_rate = 0.0001,model=model, params=params, tu = tu,tc=tc)
+losses <- trainingLoop(n_epochs = 10, learning_rate = 0.0001,
+                       model=model, params=params, tu = tu,tc=tc)
 losses
 ```
 ## Normalizing our input data
@@ -376,14 +483,17 @@ summary(tun)
 
 ```{r trainnorm,cache=F}
 params <- torch_tensor(c(1.0,0.0), requires_grad = TRUE)
-losses <- trainingLoop(n_epochs = 100, learning_rate = 0.01,model=model, params=params, tu = tun,tc=tc)
+losses <- trainingLoop(n_epochs = 100, learning_rate = 0.01,
+                       model=model, params=params, tu = tun,tc=tc)
 ```
+
 ## Plot the losses
 
-```{r plotlosses}
+We are still improving after 100 epochs.
+
+```{r plotlosses2,fig.height = 3.5, fig.width = 4}
 plot(losses,type="l",xlab="epoch",ylab="loss")
 ```
-
 
 ## Training for 3000 epochs
 
@@ -399,22 +509,45 @@ Expected parameters: `w = 5.5556` and `b = -17.7778`. Not bad!
 plot(losses,type="l",xlab="epoch",ylab="loss")
 ```
 
-## Plot our new model
+## Plot the output of the trained model
 
-```{r plotmodel}
+```{r plotmodel, fig.height = 2.5, fig.width=3}
 df2 <- df
 df2$tp <- as_array(model(tun,params)) 
-
 ggplot(data=df2)+
   geom_point(mapping = aes(x = tu, y = tc))+
   geom_point(mapping = aes(x = tu, y = tp),color = "red")+
-  geom_smooth(mapping = aes(x= tu, y = tc), method="lm") +
   xlab("Fahrenheit")+
   ylab("Celcius")
 
 ```
 
 
+## Plot the output of the trained model
+
+```{r plotmodel1, fig.height = 2.5, fig.width=3}
+df2 <- df
+df2$tp <- as_array(model(tun,params)) 
+ggplot(data=df2)+
+  geom_point(mapping = aes(x = tu, y = tc))+
+  geom_point(mapping = aes(x = tu, y = tp),color = "red")+
+  geom_smooth(mapping = aes(x = tu, y = tc), method = "lm")+
+  xlab("Fahrenheit")+
+  ylab("Celcius")
+
+```
+
+
+
+## In summary
+
+* We had a dataset and asked how to transform $X$ in order to obtain $Y$. 
+* We chose a linear regression model with 2 parameters.
+* We defined a loss function.
+* We use "torch" to calculate the gradients.
+* We trained our model by minimizing the loss function.
+
+Very similar procedures are used to train more complex models (deep neural network).
 
 ## Linear regression
 
@@ -445,20 +578,27 @@ But R is catching up.
 * torch package
 * [datacamp](https://www.datacamp.com/tracks/machine-learning-scientist-with-r)
 
+## Online courses
+
+There are several excellent machine learning course online (datacamp)
+
+Many of them use python as language (especially for deep neural network).
+
+
 ### Good books
 
 * [Deep Learning with PyTorch](https://pytorch.org/assets/deep-learning/Deep-Learning-with-PyTorch.pdf)
 
 * [Hands-On Machine Learning with Scikit-Learn and TensorFlow](https://www.amazon.de/Hands-Machine-Learning-Scikit-Learn-TensorFlow/dp/1491962291)
 
-* [An Introduction to Statistical Learning: With Applications in R](https://www.academia.edu/36691506/An_Introduction_to_Statistical_Learning_Springer_Texts_in_Statistics_An_Introduction_to_Statistical_Learning) 
-
 * [Deep Learning for Coders with fastai and PyTorch](https://www.fast.ai/)
+
+* [An Introduction to Statistical Learning: With Applications in R](https://www.academia.edu/36691506/An_Introduction_to_Statistical_Learning_Springer_Texts_in_Statistics_An_Introduction_to_Statistical_Learning) 
 
 ## For next week
 
-* Read a book chapter: [The Machine Learning Landscape](https://www.oreilly.com/library/view/hands-on-machine-learning/9781491962282/ch01.html) (Hands-on machine learning chapter  1)
+* Read a book chapter: [The Machine Learning Landscape](https://www.oreilly.com/library/view/hands-on-machine-learning/9781491962282/ch01.html) (Hands on machine learning with sklearn and tensorflow, Chapter 1)
 
-* Read a Nature Neuroscinece paper: [Deeplabcut](http://orga.cvss.cc/wp-content/uploads/2019/05/Mathis-etal-2018-NatureNeuroscience.pdf)
+* Read a Nature Neuroscinece paper: [Deeplabcut](http://orga.cvss.cc/wp-content/uploads/2019/05/Mathis-etal-2018-NatureNeuroscience.pdf) Mathis et al., 2018.
 
-* Have a look at the [DeepLabCut repository](https://github.com/AlexEMG/DeepLabCut)
+* Have a look at the [DeepLabCut repository](https://github.com/AlexEMG/DeepLabCut) (https://github.com/AlexEMG/DeepLabCut)
