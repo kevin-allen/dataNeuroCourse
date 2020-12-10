@@ -76,6 +76,7 @@ Learning can be defined as finding the best model parameters to solve a problems
 **Simple example**: Find the relationship between IQ and education with a linear regression model. Two parameters.
 
 $$y = a*x + b $$ 
+
 **Complex example**: Find a mouse in an image. Millions of parameters.
 
 ```{r, echo=FALSE,out.width = "350px"}
@@ -244,7 +245,7 @@ dm$residuals<-residuals(fit)
 ggplot(data=dm, mapping = aes(x=tu,y=tc))+
   geom_segment(aes(xend = tu, yend = predicted),alpha = 0.2) +
   geom_point() +
-  geom_smooth(method = "lm", se = FALSE, color = "red") 
+  geom_smooth(method = "lm", se = FALSE, color = "red", formula = y~x) 
 ```
 
 ## Loss function
@@ -269,13 +270,14 @@ data.frame(predicted = seq(-10,10,0.1),
                        y = loss_fn(predicted,observed)))+
   geom_point()
 ```
+
 ## Loss function
 
 We need to find the model parameters ($w$ and $b$) to minimize the loss function.
 
 ## Loss function
 
-We need to adjust our loss function to return one value when we pass several pairs of number as input.
+Small modification: return one value when we pass several pairs of number as input.
 
 We will output the mean of the squared difference
 ```{r loss2}
@@ -291,13 +293,13 @@ loss_fn(seq(-6,6,0.1),0)
 
 ```{r model_loss}
 tu # new thermometer values
-params <- c(1.0,0.0)
+params <- c(1.0,0.0) # arbitrary values
 tp <- model(tu,params)
 tp # model prediction
 loss <- loss_fn(tp,tc)
 print(paste("loss:",loss))
 ```
-## How do we adjust w and b to reduce the loss?
+## How do we adjust $w$ and $b$ to reduce the loss?
 
 We could test many random values for $w$ and $b$ and find the combination with the lowest loss.
 This solution will not scale well to models with millions of parameters.
@@ -307,7 +309,7 @@ A more efficient approach is called **gradient descent**.
 * Calculate the rate of change of the loss with respect to each parameter.
 * Modify each parameter in the direction of decreasing loss.
 
-## Rate of change of the loss relative to w
+## Rate of change of the loss relative to $w$
 
 ```{r par,echo=F}
 par(bty = 'n', mar=c(4,4,1,0.1), mgp=c(2,1,0)) 
@@ -343,7 +345,7 @@ Torch is a c library that can calculate gradients.
 library(torch)
 ```
 
-##  Derivative of the loss with respect to a parameter
+##  Torch
 
 We need to create torch tensor (vector) with the argument `requires_grad = TRUE`.
 
@@ -352,7 +354,7 @@ params <- torch_tensor(c(1.0,0.0), requires_grad = TRUE)
 params
 class(params)
 ```
-## Derivative of the loss with respect to a parameter
+## Adjust the loos function for torch parameters
 
 We need to slightly modify our loss function to work with torch_tensor
 ```{r adjustloss}
@@ -362,9 +364,10 @@ loss_fn <- function(y,y_pred){
 }
 ```
 
-## Derivative of the loss with respect to a parameter
+## Calculate the gradients
 
 ```{r torch2}
+params <- torch_tensor(c(1.0,0.0), requires_grad = TRUE)
 loss <- loss_fn(model(tu,params),tc)
 loss$backward() # calculate the gradients
 params$grad
@@ -385,61 +388,66 @@ params$grad$zero_() # reset the gradients to 0
 ```
 
 
+## So far we have...
+
+* Input data with labels ($X$ and $Y$).
+* A model with 2 parameters ($w$ and $b$).
+* A loss function.
+* torch to calculate the gradients of the parameters.
+
+### We are ready to train our model!
+
 ## Training loop (minimal)
 
 
 ```{r trainingLoop}
 trainingLoop <- function(n_epochs=10,learning_rate=0.0001
                          ,model,params,tu,tc){
+  
   for (epoch in seq(1,n_epochs)){ # loop
-   
-   tp <- model(tu,params) # predict
-   
-   loss <- loss_fn(tp,tc) # loss
-   
-   loss$backward() # calculate the gradients
-
-   with_no_grad({   # adjust parameters
+    tp <- model(tu,params) # predict
+    loss <- loss_fn(tp,tc) # loss
+    loss$backward() # calculate the gradients
+    with_no_grad({   # adjust parameters
       params$sub_(learning_rate * params$grad)
-   })
-   
-   params$grad$zero_() # reset to 0.
-  } # end of the loop
+      })
+    params$grad$zero_() # reset to 0.
+    } # end of the loop
   
   return()
 }
 ```
 
-
-
 ## Train the model (minimal)
 
 ```{r training}
 params <- torch_tensor(c(1.0,0.0), requires_grad = TRUE)
-trainingLoop(n_epochs = 10, learning_rate = 0.0001,model=model, params=params, tu = tu,tc=tc)
+trainingLoop(n_epochs = 10, learning_rate = 0.0001,
+             model=model, params=params, tu = tu,tc=tc)
 params
 ```
+
+It is very hard to know what is going on!
 
 
 ## Training loop (with output information)
 
 ```{r trainingLoop1}
-trainingLoop <- function(n_epochs=10,learning_rate=0.0001
-                         ,model,params,tu,tc){
+trainingLoop <- function(n_epochs = 10, learning_rate = 0.0001, 
+                         model, params, tu, tc) {
   all_losses <- vector(length = n_epochs)
-  for (epoch in seq(1,n_epochs)){
-   tp <- model(tu,params) # predict
-   loss <- loss_fn(tp,tc) # loss
-   loss$backward() # calculate the gradients
-
-   with_no_grad({   # adjust parameters
+  for (epoch in seq(1, n_epochs)) {
+    tp <- model(tu, params) # predict
+    loss <- loss_fn(tp, tc) # loss
+    loss$backward() # calculate the gradients
+    with_no_grad({
+      # adjust parameters
       params$sub_(learning_rate * params$grad)
-   })
-   
-   if(epoch < 3 | epoch > n_epochs - 2) # print info 
-    print_training_info(epoch, n_epochs, loss, params)
-   params$grad$zero_() # reset to 0.
-   all_losses[epoch] <- as.array(loss)
+    })
+    if (epoch < 3 | epoch > n_epochs - 2)
+      print_training_info(epoch, n_epochs, loss, params)
+    params$grad$zero_() # reset to 0.
+    all_losses[epoch] <- as.array(loss)
   }
   return(all_losses)
 }
@@ -527,17 +535,15 @@ ggplot(data=df2)+
 
 ```{r plotmodel1, fig.height = 2.5, fig.width=3}
 df2 <- df
-df2$tp <- as_array(model(tun,params)) 
+df2$tp <- as.array(model(tun,params)) 
 ggplot(data=df2)+
   geom_point(mapping = aes(x = tu, y = tc))+
   geom_point(mapping = aes(x = tu, y = tp),color = "red")+
-  geom_smooth(mapping = aes(x = tu, y = tc), method = "lm")+
+  geom_smooth(mapping = aes(x = tu, y = tc), method = "lm", formula =y~x) +
   xlab("Fahrenheit")+
   ylab("Celcius")
 
 ```
-
-
 
 ## In summary
 
@@ -557,13 +563,13 @@ Very similar procedures are used to train more complex models (deep neural netwo
 ## Compare our results to lm()
 
 ```{r best_fit4}
-myFittedModel<-lm(tc~tun, data=df)
+myFittedModel<-lm(formula = tc~tun, data=df)
 myFittedModel
 ```
 Use `summary(myFittedModel)` to know if the model is significant. 
 
 
-### Best libraries for machine learning
+## Best libraries for machine learning
 
 This is where python has the upper hand on R.
 
@@ -580,12 +586,12 @@ But R is catching up.
 
 ## Online courses
 
-There are several excellent machine learning course online (datacamp)
+There are several excellent machine learning courses online (datacamp)
 
 Many of them use python as language (especially for deep neural network).
 
 
-### Good books
+## Good books
 
 * [Deep Learning with PyTorch](https://pytorch.org/assets/deep-learning/Deep-Learning-with-PyTorch.pdf)
 
