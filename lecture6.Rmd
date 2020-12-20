@@ -44,7 +44,7 @@ Often using an iterative process (i.e. a loop).
 4. Go back to 1.
 
 
-## Linear regression
+## We worked with a very simple model: Linear regression
 
 * One of the simplest model to explain your data.
 * $Y = wX + b$
@@ -53,6 +53,14 @@ Often using an iterative process (i.e. a loop).
 * $w$ is the slope and $b$ is the intercept.
 * We found the best parameters $w$ and $b$ that minimize a loss function.
 
+
+## Deep neural network
+
+Deep neural network have multiple layers between the input and output layers.
+
+```{r, echo=FALSE,out.width = "700px"}
+knitr::include_graphics("images/deep-neural-network.png")
+```
 
 ## DeepLabCut
 
@@ -71,22 +79,38 @@ Often using an iterative process (i.e. a loop).
 Previous alternative: video recordings with easily recognizable reflective markers on the animal.
 
 
-## Deep neural network
-
-```{r, echo=FALSE,out.width = "800px"}
-knitr::include_graphics("images/deep-neural-network.png")
-```
-
 
 ## History
 
-* Deep convolutional neural networks became able to detect objects and classify images (ImageNet).
+Deep convolutional neural networks became able to detect objects and classify images.
 
-```{r, echo=FALSE,out.width = "800px"}
+ImageNet competition: 1.3 million images and 1000 different classes
+
+```{r, echo=FALSE,out.width = "700px"}
 knitr::include_graphics("images/imageNetResults.png")
 ```
 
 Shawahna, Sait, El-Maleh (2018) IEEEAccess
+
+## Convolution with images
+
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/convolution1.png")
+```
+
+## Convolutional neural networks
+
+```{r, echo=FALSE,out.width = "800px"}
+knitr::include_graphics("images/LeNet5.png")
+```
+LeCun et al. (1989). Backpropagation applied to handwritten zip code recognition. Neural Computation.
+
+
+## Features in convolutional netowrks
+
+```{r, echo=FALSE,out.width = "700px"}
+knitr::include_graphics("images/imageNet_features.png")
+```
 
 
 
