@@ -1,7 +1,7 @@
 ---
 title: "Data science and analysis in Neuroscience"
 author: "Kevin Allen"
-date: "December 19, 2019"
+date: "December 21, 2020"
 output:
   ioslides_presentation: default
   beamer_presentation: default
@@ -17,7 +17,7 @@ library(knitr)
 ## Machine learning and DeepLabCut
 
 1. Brief review of last lecture
-2. Introduction of DeepLabCut
+2. Introduction to DeepLabCut
 3. Example of how to use DeepLabCut
 
 ## Review
@@ -34,59 +34,25 @@ Examples : A program learns to decide whether an email is spam or not based on t
 * Supervised versus unsupervised
 * Regression versus classification
 
+## How do computers learn?
+
+Often using an iterative process (i.e. a loop).
+
+1. Feed data to your model
+2. Calculate the error (loss).
+3. Adjust the model parameters by a small amount to minimize the loss, using gradients.
+4. Go back to 1.
+
+
 ## Linear regression
 
-```{r load,include=FALSE}
-{
-myFile="~/repo/dataNeuroCourse/dataSets/tmaze.csv" 
-df<-read_csv(myFile)
-df<-mutate(df, correct = sample != choice)
-
-df1 <- df %>% 
-  group_by(mouse,block) %>% 
-  summarise(performance = 100 * mean(correct))
-}
-```
-
 * One of the simplest model to explain your data.
-* $Y = aX + b$
+* $Y = wX + b$
 * $Y$: target
 * $X$: features (inputs)
-* $a$ is the slope and $b$ is the intercept.
-* Find the parameters $a$ and $b$ that minimize a cost function.
+* $w$ is the slope and $b$ is the intercept.
+* We found the best parameters $w$ and $b$ that minimize a loss function.
 
-
-## Measuring the fit of different models
-
-```{r lm,echo=FALSE,fig.width = 6, fig.height = 3}
-dm<-df1
-# add a bit of noise to block so that the points are not on top of each other
-dm$block<-dm$block + runif(n = length(df1$block), min = -0.5, max = 0.5)
-# fit a linear model to the data
-fit<-lm(performance~block,data = dm)
-# get predicted values and residuals
-dm$predicted<-predict(fit)
-dm$residuals<-residuals(fit)
-# plot 
-ggplot(data=dm, mapping = aes(x=block,y=performance))+
-  geom_segment(aes(xend = block, yend = predicted),alpha = 0.2) +
-  geom_point() +
-  geom_smooth(method = "lm", se = FALSE, color = "red")
-```
-
-***
-
-```{r best_fit4}
-lm(performance~block, data=df1)
-```
-
-## Display the results of lm()
-
-```{r compare,fig.width = 3, fig.height = 3}
-ggplot(data=df1,mapping=aes(x=block,y=performance)) +
-  geom_point(position="jitter") +
-  geom_smooth(method = "lm", se = FALSE, color = "red")
-```
 
 ## DeepLabCut
 
@@ -95,13 +61,12 @@ ggplot(data=df1,mapping=aes(x=block,y=performance)) +
 ## DeepLabCut
 
 * A method for 3D markerless pose estimation
-* Quantifies behavior
-* Uses deep neural networks
+* Use for animal behavior but very flexible
+* Uses deep neural networks to process images (convolutional neural network)
 * Matches human accuracy, but is much faster
 * Used more and more in behavioral experiments
-* Open-source technologies (python, tensorflow, etc)
-
-* Relatively easy to use, but you need access to a graphics card (graphics processing unit, GPU).
+* Based on open-source technologies (python, tensorflow, etc)
+* Training with a graphics card or with online services
 
 Previous alternative: video recordings with easily recognizable reflective markers on the animal.
 
