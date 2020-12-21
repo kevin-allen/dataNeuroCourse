@@ -16,8 +16,8 @@ library(knitr)
 
 ## Machine learning and DeepLabCut
 
-1. Brief review of last lecture
-2. Introduction to DeepLabCut
+1. Review of key machine learning concepts
+2. Introduction to deep neural networks
 3. Example of how to use DeepLabCut
 
 ## Review
@@ -26,13 +26,13 @@ Machine learning is the field of study that gives computer the ability to learn 
 
 -- Arthur Samuel, 1959
 
-Examples : A program learns to decide whether an email is spam or not based on training set. 
-
-## Definition of machine learning
+## Types of machine learning
 
 * Prediction versus inference
 * Supervised versus unsupervised
 * Regression versus classification
+
+These concepts are useful to quickly find the right tool (model) for the job.
 
 ## How do computers learn?
 
@@ -44,15 +44,26 @@ Often using an iterative process (i.e. a loop).
 4. Go back to 1.
 
 
-## We worked with a very simple model: Linear regression
+## Our linear regression model
 
-* One of the simplest model to explain your data.
+* One of the simplest models.
 * $Y = wX + b$
 * $Y$: target
 * $X$: features (inputs)
 * $w$ is the slope and $b$ is the intercept.
-* We found the best parameters $w$ and $b$ that minimize a loss function.
+* We found the best parameters ($w$ and $b$) that minimize a loss function.
 
+## Linear regression
+
+```{r, echo=FALSE,out.width = "500px"}
+knitr::include_graphics("images/linear_regression_01.png")
+```
+
+## Linear regression
+
+```{r, echo=FALSE,out.width = "500px"}
+knitr::include_graphics("images/linear_regression_02.png")
+```
 
 ## Deep neural network
 
@@ -62,29 +73,13 @@ Deep neural network have multiple layers between the input and output layers.
 knitr::include_graphics("images/deep-neural-network.png")
 ```
 
-## DeepLabCut
-
-[https://www.mousemotorlab.org/deeplabcut/](https://www.mousemotorlab.org/deeplabcut/)
-
-## DeepLabCut
-
-* A method for 3D markerless pose estimation
-* Use for animal behavior but very flexible
-* Uses deep neural networks to process images (convolutional neural network)
-* Matches human accuracy, but is much faster
-* Used more and more in behavioral experiments
-* Based on open-source technologies (python, tensorflow, etc)
-* Training with a graphics card or with online services
-
-Previous alternative: video recordings with easily recognizable reflective markers on the animal.
 
 
+## Convolutional neural network (CNN)
 
-## History
+Date back to 1989 (Yann LeCun). They are great at detecting objects and classifying images.
 
-Deep convolutional neural networks became able to detect objects and classify images.
-
-ImageNet competition: 1.3 million images and 1000 different classes
+ImageNet competition: 1.3 million images and 1000 classes
 
 ```{r, echo=FALSE,out.width = "700px"}
 knitr::include_graphics("images/imageNetResults.png")
@@ -105,13 +100,52 @@ knitr::include_graphics("images/LeNet5.png")
 ```
 LeCun et al. (1989). Backpropagation applied to handwritten zip code recognition. Neural Computation.
 
+Neurons have receptive fields, similar to what is observed in the visual system.
+
+## Features in convolutional netowrks
+
+```{r, echo=FALSE,out.width = "300px"}
+knitr::include_graphics("images/imageNet_features_01.png")
+```
+
+Zeiler and Fergus (2013) Visualizing and Understanding Convolutional Networks
+
 
 ## Features in convolutional netowrks
 
 ```{r, echo=FALSE,out.width = "700px"}
-knitr::include_graphics("images/imageNet_features.png")
+knitr::include_graphics("images/imageNet_features_02.png")
 ```
 
+## Features in convolutional netowrks
+
+```{r, echo=FALSE,out.width = "700px"}
+knitr::include_graphics("images/imageNet_features_03.png")
+```
+
+## Features in convolutional netowrks
+
+```{r, echo=FALSE,out.width = "400px"}
+knitr::include_graphics("images/imageNet_features_04.png")
+```
+
+
+## Using a convolutional neural network
+
+DeepLabCut
+
+[https://www.mousemotorlab.org/deeplabcut/](https://www.mousemotorlab.org/deeplabcut/)
+
+## DeepLabCut
+
+* A method for 3D markerless pose estimation
+* Uses a deep neural network that was pretrained on image classification
+* Matches human accuracy, but is much faster
+* Based on open-source technologies (python, tensorflow, etc)
+* Training with a graphics card or with online services
+* Very popular (>5000 followers on Twitter)
+
+Previous alternative: video recordings with markers on the animal.
 
 
 ## DeepLabCut: the workflow
@@ -141,7 +175,6 @@ knitr::include_graphics("images/MathisFigure2.png")
 We need to use python instead of R to run DeepLabCut.
 
 Have a look at the jupyter notebook called `dlcLaptop.ipynb` in the DeepLabCut directory of the course repository.
-
 
 If you are new to jupyter notebook, you can install [Anaconda](https://www.anaconda.com/) on your computer. After installation, you should be able to start jupyter notebook on your computer.
 
