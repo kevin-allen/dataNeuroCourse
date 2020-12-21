@@ -174,9 +174,8 @@ knitr::include_graphics("images/MathisFigure2.png")
 
 We need to use python instead of R to run DeepLabCut.
 
-Have a look at the jupyter notebook called `dlcLaptop.ipynb` in the DeepLabCut directory of the course repository.
-
-If you are new to jupyter notebook, you can install [Anaconda](https://www.anaconda.com/) on your computer. After installation, you should be able to start jupyter notebook on your computer.
+If you are new to jupyter notebook, install [Anaconda](https://www.anaconda.com/) on your computer. After installation, you should be able to start jupyter notebook on your computer.
 
 The [Jupyter Notebook](https://jupyter.org/) is an open-source web application that allows you to create and share documents that contain live code, equations, visualizations and narrative text.
 
+Open the notebook `dlcLaptop.ipynb` in the DeepLabCut directory of the course repository and follow the instructions.
